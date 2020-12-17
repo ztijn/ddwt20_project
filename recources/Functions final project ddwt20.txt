@@ -1,0 +1,98 @@
+﻿DDWT 20
+Final Project
+Function and pages overview
+
+
+Overall
+Navigation bar
+Breadcrumbs
+
+
+Functions and pages
+Landing page
+* Title
+* Description of website
+* Available room overview (also for non logged in users?)
+
+
+Register page
+* Register form
+* Form validation, Form processing, Adding user to database
+
+
+Log in page		Andre
+* Login form with username and password
+* Login validation
+
+
+Adding a room page
+* Room information form
+* Form validation, Processing form, Adding room to database
+
+
+Room page
+* Room information
+* Edit buton for room owner
+* “Join” button for user, “Unjoin” button for user
+* Delete button for owner
+
+
+Joined room page
+* Chat ability for user to interact with tenant
+
+
+Profile page
+* User information
+* Edit user information
+* Joined rooms
+* Delete profile
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	Owner
+	Tenant
+	Landing page
+	Read all rooms available
+	Read all rooms available
+	Register page
+	Register as Owner
+	Register as tenant
+	Log in page
+	Log in as Owner
+	Log in as tenant
+	Adding room page
+	Add a room
+	x
+	Room page
+	Read rooms owned
+Read all opt-ins(see all info about opted-in user)
+Update information
+Delete room
+	Opt-in to room (collect user and room)
+Delete opt in
+	Joined room
+	Read profile information about opted-in users
+	Read all rooms opted-in to
+Read information about owner
+	Profile page
+	Update profile information
+Delete profile(All rooms deleted)
+	Update profile information
+Delete profile (All opt-ins will be deleted)
+	
+
+* All users should be able to read messages
+* owner and tenant should be able to communicate through messages
