@@ -20,7 +20,7 @@ Register page
 * Form validation, Form processing, Adding user to database
 
 
-Log in page
+Log in page		Andre
 * Login form with username and password
 * Login validation
 
