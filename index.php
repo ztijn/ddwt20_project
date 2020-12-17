@@ -19,7 +19,7 @@ $right_column = use_template('cards');
 $nav_template = Array(
     1 => Array(
         'name' => 'Home',
-        'url' => '/DDWT20/week2/'
+        'url' => '/ddwt20_project/'
     ),
     2 => Array(
         'name' => 'Overview',
@@ -47,15 +47,15 @@ if (new_route('/ddwt20_project/', 'get')) {
     /* Page info */
     $page_title = 'Home';
     $breadcrumbs = get_breadcrumbs([
-        'DDWT20' => na('/DDWT20/', False),
-        'Week 2' => na('/DDWT20/week2/', False),
-        'Home' => na('/DDWT20/week2/', True)
+        'Home' => na('/ddwt20_project/', True)
     ]);
     $navigation = get_navigation($nav_template, 1);
 
     /* Page content */
-    $page_subtitle = 'The online platform to list your favorite series';
-    $page_content = 'On Series Overview you can list your favorite series. You can see the favorite series of all Series Overview users. By sharing your favorite series, you can get inspired by others and explore new series.';
+    $page_subtitle = 'The online platform to lease rooms you own and find rooms available to rent!';
+    $page_content = 'On this platform you can find available rooms for rent. If you are interested in the room, you can
+     opt in and send the owner of the room a message. The owner will then be able to see your profile, send you messages
+      and if you are lucky, you will get chosen by the owner to rent the room.';
 
     if ( isset($_GET['error_msg']) ) {
         $error_msg = get_error($_GET['error_msg']);
