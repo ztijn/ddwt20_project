@@ -148,6 +148,12 @@ function get_navigation($template, $active_id){
     return $navigation_exp;
 }
 
+function redirect($location){
+    header(sprintf('Location: %s', $location));
+    die();
+}
+
+
 function register_user($pdo, $form_data){
     /* Check if all fields are set */
     if (
@@ -213,4 +219,70 @@ function register_user($pdo, $form_data){
     redirect(sprintf('/ddwt20_project/myaccount/?error_msg=%s',
         json_encode($feedback)));
 
+}
+
+function add_room($pdo, $room_info, $current_user){
+    /* Check if all fields are set */
+    if (
+        empty($room_info['address']) or
+        empty($room_info['type']) or
+        empty($room_info['price']) or
+        empty($room_info['size']) or
+        empty($room_info['status'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Not all fields were filled in.'
+        ];
+    }
+
+    /* Check data type */
+    if (!is_numeric($room_info['price'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You should enter a number in the field price.'
+        ];
+    }
+
+    if (!is_numeric($room_info['size'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You should enter a number in the field size.'
+        ];
+    }
+
+    /* Check if room already exists */
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE name = ?');
+    $stmt->execute([$room_info['address']]);
+    $serie = $stmt->rowCount();
+    if ($serie){
+        return [
+            'type' => 'danger',
+            'message' => 'This series was already added.'
+        ];
+    }
+
+    /* Add room */
+    $stmt = $pdo->prepare("INSERT INTO rooms (owner, address, type , price, status) VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([
+        $current_user,
+        $room_info['address'],
+        $room_info['type'],
+        $room_info['price'],
+        $room_info['size'],
+        $room_info['status']
+    ]);
+    $inserted = $stmt->rowCount();
+    if ($inserted ==  1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("room '%s' added to room page .", $room_info['address'])
+        ];
+    }
+    else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. The room was not added. Please try it again.'
+        ];
+    }
 }

@@ -26,8 +26,8 @@ $nav_template = Array(
         'url' => '/DDWT20/week2/overview/'
     ),
     3 => Array(
-        'name' => 'Add series',
-        'url' => '/DDWT20/week2/add/'
+        'name' => 'Add rooms',
+        'url' => '/ddwt20_project/add_room/'
     ),
     4 => Array(
         'name' => 'My Account',
@@ -124,6 +124,38 @@ elseif (new_route('/ddwt20_project/register/', 'post')){
     /* Choose Template */
     include use_template('register');
 
+}
+
+/* add room get */
+elseif (new_route('/ddwt20_project/add_room/', 'get')) {
+    /* Page info */
+    $page_title = 'Add Rooms';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/ddwt20_project/', False),
+        'Add room' => na('/ddwt20_project/add_room/', True)
+    ]);
+    $navigation = get_navigation($nav_template, 2);
+
+    /* Page content */
+    $page_subtitle = 'Here you can add a room for listing as a tenant';
+    $page_content = 'Please fill in the form below, to make your room available';
+    $submit_btn = "Add Room";
+    $form_action = '/ddwt20_project/add_room/';
+
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('add_room');
+}
+
+
+/* add room post */
+elseif (new_route('/ddwt20_project/add_room/', 'post')) {
+
+    $feedback = add_room($database, $_POST, $_SESSION['user_id']);
+    redirect(sprintf('/ddwt20_project/add_room/?error_msg=%s', json_encode($feedback)));
 }
 
 
