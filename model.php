@@ -286,3 +286,106 @@ function add_room($pdo, $room_info, $current_user){
         ];
     }
 }
+
+function get_user_id(){
+    if (isset($_SESSION['user_id'])){
+        return $_SESSION['user_id'];
+    } else {
+        return False;
+    }
+}
+
+function get_user($pdo, $id){
+    $stmt = $pdo->prepare('SELECT full_name FROM users where user_id = ?');
+    $stmt->execute([$id]);
+    $user_name = $stmt->fetch();
+    return sprintf("%s", htmlspecialchars($user_name['full_name']));
+
+}
+
+function count_users($pdo){
+    /* user count */
+    $stmt = $pdo->prepare('SELECT * FROM users');
+    $stmt->execute();
+    $user_count = $stmt->rowCount();
+    return $user_count;
+}
+
+function count_rooms($pdo){
+    /* room count */
+    $stmt = $pdo->prepare('SELECT * FROM rooms');
+    $stmt->execute();
+    $series = $stmt->rowCount();
+    return $series;
+}
+
+function logout_user(){
+    /* empty the session and than destroy it */
+    session_unset();
+    session_destroy();
+    $feedback = [
+        'type' => 'success',
+        'message' => sprintf('You were logged out')
+    ];
+
+    /* Redirect to homepage */
+    redirect(sprintf('/ddwt20_project/?error_msg=%s', json_encode($feedback)));
+}
+
+function check_login(){
+    session_start();
+    if (isset($_SESSION['user_id'])) {
+        return True;
+    } else {
+        return False;
+    }
+}
+
+function login_user($pdo, $form_data){
+    /* Check if all fields are set */
+    if (
+        empty($form_data['username']) or
+        empty($form_data['password'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'You should enter a username and password.'
+        ];
+    }
+
+    /* Check if user exists */
+    try {
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE username = ?');
+        $stmt->execute([$form_data['username']]);
+        $user_info = $stmt->fetch();
+    } catch (PDOException $e){
+        return [
+            'type' => 'danger',
+            'message' => sprintf('There was an error: %s', $e->getMessage())
+        ];
+    }
+
+    /* Return error message for wrong username */
+    if (empty($user_info)){
+        return [
+            'type' => 'danger',
+            'message' => 'The entered username does not exist in the database'
+        ];
+    }
+
+    /* Check password */
+    if ( !password_verify($form_data['password'], $user_info['password']) ){
+        return [
+            'type' => 'danger',
+            'message' => 'The password you entered is incorrect!'
+        ];
+    } else {
+        session_start();
+        $_SESSION['user_id'] = $user_info['id'];
+        $feedback = [
+            'type' => 'success',
+            'message' => sprintf('%s, you were logged in successfully!', get_user($pdo, $_SESSION['user_id']))
+        ];
+        redirect(sprintf('/DDWT20/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+    }
+}

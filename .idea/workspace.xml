@@ -20,8 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cd9c3dfd-166a-4f02-a56e-fc1c2c759d6a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model.php" beforeDir="false" afterPath="$PROJECT_DIR$/model.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/cards.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/cards.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,9 +54,9 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state x="458" y="660" key="NewPhpFileDialog" timestamp="1610641359759">
+    <state x="458" y="660" key="NewPhpFileDialog" timestamp="1610642991939">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state x="458" y="660" key="NewPhpFileDialog/0.25.2560.1415@0.25.2560.1415" timestamp="1610641359759" />
+    <state x="458" y="660" key="NewPhpFileDialog/0.25.2560.1415@0.25.2560.1415" timestamp="1610642991939" />
   </component>
 </project>

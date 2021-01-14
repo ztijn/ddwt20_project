@@ -15,6 +15,8 @@ $database = connect_db('localhost', 'ddwt20_project', 'ddwt20', 'ddwt20');
 /**
  * all variables to remove redundant code
  */
+$nbr_rooms = count_rooms($database);
+$nbr_users = count_users($database);
 $right_column = use_template('cards');
 $nav_template = Array(
     1 => Array(
@@ -31,7 +33,7 @@ $nav_template = Array(
     ),
     4 => Array(
         'name' => 'My Account',
-        'url' => '/DDWT20/week2/myaccount/'
+        'url' => '/ddwt20_project/myaccount/'
     ),
     5 => Array(
         'name' => 'Register',
@@ -39,7 +41,7 @@ $nav_template = Array(
     ),
     6 => Array(
         'name' => 'Login',
-        'url' => '/DDWT20/week2/login/'
+        'url' => '/ddwt20_project/login/'
     ));
 
 /* Landing page */
@@ -80,7 +82,7 @@ elseif (new_route('/ddwt20_project/register/', 'get')){
         'Week 2' => na('/DDWT20/week2/', False),
         'Register' => na('/ddwt20_project/register', True)
     ]);
-    $navigation = get_navigation($nav_template, 4);
+    $navigation = get_navigation($nav_template, 5);
 
     /* Page content */
     $page_subtitle = 'Registration page';
@@ -109,7 +111,7 @@ elseif (new_route('/ddwt20_project/register/', 'post')){
         'Week 2' => na('/DDWT20/week2/', False),
         'Register' => na('/DDWT20/week2/myaccount', True)
     ]);
-    $navigation = get_navigation($nav_template, 4);
+    $navigation = get_navigation($nav_template, 5);
 
     /* Page content */
     $page_subtitle = 'Registration page';
@@ -124,6 +126,43 @@ elseif (new_route('/ddwt20_project/register/', 'post')){
     /* Choose Template */
     include use_template('register');
 
+}
+
+/* My Account */
+elseif (new_route('/ddwt20_project/myaccount/', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+    /* Page info */
+    $page_title = 'My Account';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/ddwt20_project/', False),
+        'myaccount' => na('/ddwt20_project/account/', True)
+    ]);
+
+    $navigation = get_navigation($nav_template, 4);
+
+    /* Page content */
+    $page_subtitle = 'Here are the details of your current account';
+    $page_content = 'Account:';
+    $user = get_user($database, get_user_id());
+
+    /* Get error from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('account');
+}
+
+/* Logout GET*/
+elseif (new_route('/ddwt20_project/logout/', 'GET')){
+    /* logging out a user by clicking */
+    if (!isset($_SESSION))
+    {session_start();}
+    $logout = logout_user();
 }
 
 /* add room get */
@@ -158,6 +197,34 @@ elseif (new_route('/ddwt20_project/add_room/', 'post')) {
     redirect(sprintf('/ddwt20_project/add_room/?error_msg=%s', json_encode($feedback)));
 }
 
+/* Login GET */
+elseif (new_route('/ddwt20_project/login/', 'get')) {
+    /* Page info */
+    $page_title = 'Login';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/DDWT20/', False),
+        'myaccount' => na('/DDWT20/week2/login/', True)
+    ]);
+
+    $navigation = get_navigation($nav_template, 6);
+
+    /* Page content */
+    $page_subtitle = 'Please enter you username & password';
+
+    /* Get error from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('login');
+}
+
+/* Login POST */
+elseif (new_route('/ddwt20_project/login/', 'post')) {
+    $feedback = login_user($database, $_POST);
+    redirect(sprintf('/ddwt20_project/login/?error_msg=%s', json_encode($feedback)));
+}
 
 
 else {
