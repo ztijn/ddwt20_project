@@ -35,7 +35,7 @@ $nav_template = Array(
     ),
     5 => Array(
         'name' => 'Register',
-        'url' => '/DDWT20/week2/register/'
+        'url' => '/ddwt20_project/register/'
     ),
     6 => Array(
         'name' => 'Login',
@@ -62,6 +62,68 @@ if (new_route('/ddwt20_project/', 'get')) {
     }
     /* Choose Template */
     include use_template('main');
+}
+
+/* Register page */
+
+/* Register get */
+elseif (new_route('/ddwt20_project/register/', 'get')){
+    /* Get error msg from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Page info */
+    $page_title = 'Register';
+    $breadcrumbs = get_breadcrumbs([
+        'DDWT20' => na('/DDWT20/', False),
+        'Week 2' => na('/DDWT20/week2/', False),
+        'Register' => na('/ddwt20_project/register', True)
+    ]);
+    $navigation = get_navigation($nav_template, 4);
+
+    /* Page content */
+    $page_subtitle = 'Registration page';
+    $form_action = '/ddwt20_project/register/';
+
+    /* Get error msg from POST route */
+    if ( isset($_GET['error_msg']) ) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('register');
+
+}
+
+/* register post */
+elseif (new_route('/ddwt20_project/register/', 'post')){
+    /* Register user */
+    $error_msg = register_user($database, $_POST);
+    /* Redirect to homepage */
+    redirect(sprintf('/ddwt20_project/register/?error_msg=%s',
+        json_encode($error_msg)));
+
+    /* Page info */
+    $page_title = 'My Account';
+    $breadcrumbs = get_breadcrumbs([
+        'DDWT20' => na('/DDWT20/', False),
+        'Week 2' => na('/DDWT20/week2/', False),
+        'Register' => na('/DDWT20/week2/myaccount', True)
+    ]);
+    $navigation = get_navigation($nav_template, 4);
+
+    /* Page content */
+    $page_subtitle = 'Registration page';
+    $page_content = 'Here you can register your account';
+
+    /* Register user */
+    $error_msg = register_user($database, $_POST);
+    /* Redirect to homepage */
+    redirect(sprintf('/ddwt20_project/register/?error_msg=%s',
+        json_encode($error_msg)));
+
+    /* Choose Template */
+    include use_template('register');
+
 }
 
 
