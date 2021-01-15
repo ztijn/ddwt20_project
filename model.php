@@ -386,7 +386,7 @@ function get_user($pdo, $id){
 }
 
 function user_information($pdo, $id){
-    $stmt = $pdo->prepare('SELECT * FROM users');
+    $stmt = $pdo->prepare('SELECT * FROM users where user_id = ?');
     $stmt->execute([$id]);
     $user = $stmt->fetch();
     return $user;

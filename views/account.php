@@ -58,8 +58,23 @@
                     <td><?=$phone?></td>
                 </tr>
             </table>
-        </div>
 
+            <!-- Remove and edit button to edit profile of logged in user-->
+
+            <div class="row">
+                <div class="col-sm-2">
+                    <a href="/ddwt20_project/myaccount/?user_id=<?= $_SESSION['user_id']?>" role="button" class="btn btn-warning">Edit profile</a>
+                </div>
+
+                <div class="col-sm-2">
+                    <form action="/ddwt20_project/myaccount/" method="GET">
+                        <input type="hidden" value="<?= $_SESSION['user_id'] ?>" name="user_id">
+                        <button type="submit" class="btn btn-danger">Delete profile</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <div class="pd-15">&nbsp;</div>

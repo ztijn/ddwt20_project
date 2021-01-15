@@ -9,7 +9,10 @@
         <p>Add room</p>
         <a href="/ddwt20_project/add_room/" class="btn btn-primary">List yours</a>
     </div>
+</div>
+
     <!-- User count -->
+<div class="card">
     <div class="card-header">
         Users
     </div>
@@ -20,3 +23,4 @@
         <a href="/ddwt20_project/register/" class="btn btn-primary">Register</a>
     </div>
 </div>
+
