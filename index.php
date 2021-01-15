@@ -25,7 +25,7 @@ $nav_template = Array(
     ),
     2 => Array(
         'name' => 'Overview',
-        'url' => '/DDWT20/week2/overview/'
+        'url' => '/ddwt20_project/overview/'
     ),
     3 => Array(
         'name' => 'Add rooms',
@@ -70,54 +70,102 @@ if (new_route('/ddwt20_project/', 'get')) {
 
 /* Register get */
 elseif (new_route('/ddwt20_project/register/', 'get')){
+    /* Get error msg from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
     /* Page info */
     $page_title = 'Register';
     $breadcrumbs = get_breadcrumbs([
-        'DDWT20' => na('/ddwt20_project/', False),
+        'Home' => na('/ddwt20_project/', False),
         'Register' => na('/ddwt20_project/register', True)
     ]);
     $navigation = get_navigation($nav_template, 5);
 
-    p_print("test1");
-
     /* Page content */
     $page_subtitle = 'Registration page';
-    $form_action = '/ddwt20_project/register/';
 
     /* Get error msg from POST route */
-    if ( isset($_GET['error_msg']) ) { $error_msg = get_error($_GET['error_msg']); }
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']); }
 
     /* Choose Template */
     include use_template('register');
-
 }
 
-/* register post */
-elseif (new_route('/ddwt20_project/register/', 'post')){
-    /* Page info */
-    $page_title = 'Register';
-    $breadcrumbs = get_breadcrumbs([
-        'DDWT20' => na('/ddwt20_project/', False),
-        'Register' => na('/ddwt20_project/register', True)
-    ]);
-    $navigation = get_navigation($nav_template, 5);
+/* Register POST */
+elseif (new_route('/ddwt20_project/register/', 'POST')) {
+    $feedback = register_user($database, $_POST);
+    redirect(sprintf('/ddwt20_project/register/?error_msg=%s', json_encode($feedback)));
+}
 
-    p_print("test2");
+/* Overview page */
+elseif (new_route('/ddwt20_project/overview/', 'get')) {
+    /* Page info */
+    $page_title = 'Overview';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/ddwt20_project/', False),
+        'Overview' => na('/ddwt20_project/overview', True)
+    ]);
+
+    $navigation = get_navigation($nav_template, 2);
 
     /* Page content */
-    $page_subtitle = 'Registration page';
-    $page_content = 'Here you can register your account';
+    $page_subtitle = 'The overview of all rooms';
+    $page_content = 'Here you find all rooms listed.';
+    $left_content = get_room_table(get_rooms($database), $database);
 
-    /* Register user */
-    $error_msg = register_user($database, $_POST);
-    /* Redirect to homepage */
-    redirect(sprintf('/ddwt20_project/register/?error_msg=%s',
-        json_encode($error_msg)));
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
 
     /* Choose Template */
-    include use_template('register');
-
+    include use_template('main');
 }
+
+/* Single Serie */
+elseif (new_route('/ddwt20_project/rooms/', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+    /* Get series from db */
+    $room_id = $_GET['room_id'];
+    $room_info = get_room_info($database, $room_id);
+
+    /* get the 'added by' from the database */
+    $user_id = $room_info['owner'];
+    $added_by = get_user($database, $user_id);
+
+    /* Page info */
+    $page_title = "Room Information";
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/ddwt20_project/', False),
+        'Overview' => na('/ddwt20_project/overview/', False),
+        $room_info['address'] => na('/ddwt20_project/rooms/?room_id='.$room_id, True)
+    ]);
+
+    $navigation = get_navigation($nav_template, 2);
+
+    /* Page content */
+    $page_subtitle = sprintf("Information about room %s", $room_info['address']);
+    $address = $room_info['address'];
+    $type = $room_info['type'];
+    $price = $room_info['price'];
+    $size = $room_info['size'];
+    $status = $room_info['status'];
+
+    /* Checking if user_id is equal to current logged in user */
+    if (get_user_id() === $user_id) {
+        $display_buttons = True;}
+    else {
+        $display_buttons = False;}
+
+    /* Choose Template */
+    include use_template('rooms');
+}
+
 
 /* My Account */
 elseif (new_route('/ddwt20_project/myaccount/', 'get')) {
@@ -135,9 +183,20 @@ elseif (new_route('/ddwt20_project/myaccount/', 'get')) {
     $navigation = get_navigation($nav_template, 4);
 
     /* Page content */
-    $page_subtitle = 'Here are the details of your current account';
-    $page_content = 'Account:';
+    $page_subtitle = 'Here are the details of your current account:';
     $user = get_user($database, get_user_id());
+    $user_info = user_information($database, get_user_id());
+
+    /* user info */
+    $username = $user_info['username'];
+    $fullname = $user_info['full_name'];
+    $role = $user_info['role'];
+    $birthday = $user_info['birth_date'];
+    $bio = $user_info['biography'];
+    $stud_prof = $user_info['stud_prof'];
+    $language = $user_info['language'];
+    $email = $user_info['email'];
+    $phone = $user_info['phone'];
 
     /* Get error from POST route */
     if ( isset($_GET['error_msg']) ) {
@@ -158,16 +217,21 @@ elseif (new_route('/ddwt20_project/logout/', 'GET')){
 
 /* add room get */
 elseif (new_route('/ddwt20_project/add_room/', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+
     /* Page info */
     $page_title = 'Add Rooms';
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/ddwt20_project/', False),
         'Add room' => na('/ddwt20_project/add_room/', True)
     ]);
-    $navigation = get_navigation($nav_template, 2);
+    $navigation = get_navigation($nav_template, 3);
 
     /* Page content */
-    $page_subtitle = 'Here you can add a room for listing as a tenant';
+    $page_subtitle = 'Here you can add a room for listing';
     $page_content = 'Please fill in the form below, to make your room available';
     $submit_btn = "Add Room";
     $form_action = '/ddwt20_project/add_room/';
@@ -180,16 +244,70 @@ elseif (new_route('/ddwt20_project/add_room/', 'get')) {
     include use_template('add_room');
 }
 
-
 /* add room post */
 elseif (new_route('/ddwt20_project/add_room/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
 
     $feedback = add_room($database, $_POST, $_SESSION['user_id']);
     redirect(sprintf('/ddwt20_project/add_room/?error_msg=%s', json_encode($feedback)));
 }
 
+/* Edit serie GET */
+elseif (new_route('/ddwt20_project/edit/', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+
+    /* Get serie info from db */
+    $room_id = $_GET['room_id'];
+    $room_info = get_room_info($database, $room_id);
+
+    /* Page info */
+    $page_title = 'Edit Rooms';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/ddwt20_project/', False),
+        sprintf("Edit room %s", $room_info['address']) => na('/ddwt20_project/add_room/', True)
+    ]);
+
+    $navigation = get_navigation($nav_template, 0);
+
+    /* Page content */
+    $page_subtitle = sprintf("Edit %s", $room_info['address']);
+    $page_content = 'Edit the room below.';
+    $submit_btn = "Edit Rooms";
+    $form_action = '/ddwt20_project/edit/';
+
+    /* Get error from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('add_room');
+}
+
+/* Edit serie POST */
+elseif (new_route('/ddwt20_project/edit/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+
+    $feedback = update_room($database, $_POST, $_SESSION['user_id']);
+    redirect(sprintf('/ddwt20_project/edit/?error_msg=%s&room_id=%d', json_encode($feedback), $_POST['room_id']));
+}
+
 /* Login GET */
 elseif (new_route('/ddwt20_project/login/', 'get')) {
+    /* Check if logged in */
+    if ( check_login() ) {
+        redirect('/ddwt20_project/myaccount/');
+    }
+
     /* Page info */
     $page_title = 'Login';
     $breadcrumbs = get_breadcrumbs([
@@ -217,6 +335,16 @@ elseif (new_route('/ddwt20_project/login/', 'post')) {
     redirect(sprintf('/ddwt20_project/login/?error_msg=%s', json_encode($feedback)));
 }
 
+/* Remove serie */
+elseif (new_route('/ddwt20_project/remove/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+
+    $feedback = remove_serie($database, $_POST['room_id']);
+    redirect(sprintf('/ddwt20_project/overview/?error_msg=%s', json_encode($feedback)));
+}
 
 else {
     http_response_code(404);

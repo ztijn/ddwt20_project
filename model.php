@@ -153,20 +153,19 @@ function redirect($location){
     die();
 }
 
-
-function register_user($pdo, $form_data){
+function register_user($pdo, $user_info){
     /* Check if all fields are set */
     if (
-        empty($form_data['username']) or
-        empty($form_data['password']) or
-        empty($form_data['role']) or
-        empty($form_data['full_name']) or
-        empty($form_data['birth_date']) or
-        empty($form_date['biography']) or
-        empty($form_data['stud_prof']) or
-        empty($form_data['language']) or
-        empty($form_data['email']) or
-        empty($form_data['phone'])
+        empty($user_info['username']) or
+        empty($user_info['password']) or
+        empty($user_info['role']) or
+        empty($user_info['full_name']) or
+        empty($user_info['birth_date']) or
+        empty($user_info['biography']) or
+        empty($user_info['stud_prof']) or
+        empty($user_info['language']) or
+        empty($user_info['email']) or
+        empty($user_info['phone'])
     ) {
         return [
             'type' => 'danger',
@@ -177,7 +176,7 @@ function register_user($pdo, $form_data){
     /* Check if user already exists */
     try {
         $stmt = $pdo->prepare('SELECT * FROM users WHERE username = ?');
-        $stmt->execute([$form_data['username']]);
+        $stmt->execute([$user_info['username']]);
         $user_exists = $stmt->rowCount();
     } catch (\PDOException $e) {
         return [
@@ -195,14 +194,22 @@ function register_user($pdo, $form_data){
     }
 
     /* Hash password */
-    $password = password_hash($form_data['password'], PASSWORD_DEFAULT);
+    $password = password_hash($user_info['password'], PASSWORD_DEFAULT);
     /* Save user to the database */
     try {
-        $stmt = $pdo->prepare('INSERT INTO users (username, password, role, full_name, birth_date, 
-                   biography, stud_prof, language, email, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$form_data['username'], $password, $form_data['role'],
-            $form_data['full_name'], $form_data['birth_date'], $form_data['biography'], $form_data['stud_prof'], $form_data['language.'],
-        $form_data['email'], $form_data['phone']]);
+        $stmt = $pdo->prepare('INSERT INTO users (username, password, role, full_name, birth_date, biography, stud_prof, language, email, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([
+            $user_info['username'],
+            $password,
+            $user_info['role'],
+            $user_info['full_name'],
+            $user_info['birth_date'],
+            $user_info['biography'],
+            $user_info['stud_prof'],
+            $user_info['language'],
+            $user_info['email'],
+            $user_info['phone']
+        ]);
         $user_id = $pdo->lastInsertId();
     } catch (PDOException $e) {
         return [
@@ -216,7 +223,7 @@ function register_user($pdo, $form_data){
     $_SESSION['user_id'] = $user_id;
     $feedback = [
         'type' => 'success',
-        'message' => sprintf('%s, your account was successfully created!', get_username($pdo, $_SESSION['user_id']))
+        'message' => sprintf('%s, your account was successfully created!', $user_info['username'])
     ];
     redirect(sprintf('/ddwt20_project/myaccount/?error_msg=%s',
         json_encode($feedback)));
@@ -226,11 +233,11 @@ function register_user($pdo, $form_data){
 function add_room($pdo, $room_info, $current_user){
     /* Check if all fields are set */
     if (
-        empty($room_info['address']) or
-        empty($room_info['type']) or
-        empty($room_info['price']) or
-        empty($room_info['size']) or
-        empty($room_info['status'])
+        empty($room_info['Address']) or
+        empty($room_info['Type']) or
+        empty($room_info['Price']) or
+        empty($room_info['Size']) or
+        empty($room_info['Status'])
     ) {
         return [
             'type' => 'danger',
@@ -239,14 +246,14 @@ function add_room($pdo, $room_info, $current_user){
     }
 
     /* Check data type */
-    if (!is_numeric($room_info['price'])) {
+    if (!is_numeric($room_info['Price'])) {
         return [
             'type' => 'danger',
             'message' => 'There was an error. You should enter a number in the field price.'
         ];
     }
 
-    if (!is_numeric($room_info['size'])) {
+    if (!is_numeric($room_info['Size'])) {
         return [
             'type' => 'danger',
             'message' => 'There was an error. You should enter a number in the field size.'
@@ -254,8 +261,8 @@ function add_room($pdo, $room_info, $current_user){
     }
 
     /* Check if room already exists */
-    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE name = ?');
-    $stmt->execute([$room_info['address']]);
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE address = ?');
+    $stmt->execute([$room_info['Address']]);
     $serie = $stmt->rowCount();
     if ($serie){
         return [
@@ -263,28 +270,101 @@ function add_room($pdo, $room_info, $current_user){
             'message' => 'This series was already added.'
         ];
     }
-
     /* Add room */
-    $stmt = $pdo->prepare("INSERT INTO rooms (owner, address, type , price, status) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO rooms (owner, address, type, price, size, status) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->execute([
         $current_user,
-        $room_info['address'],
-        $room_info['type'],
-        $room_info['price'],
-        $room_info['size'],
-        $room_info['status']
+        $room_info['Address'],
+        $room_info['Type'],
+        $room_info['Price'],
+        $room_info['Size'],
+        $room_info['Status']
     ]);
     $inserted = $stmt->rowCount();
     if ($inserted ==  1) {
         return [
             'type' => 'success',
-            'message' => sprintf("room '%s' added to room page .", $room_info['address'])
+            'message' => sprintf("room '%s' added to room page .", $room_info['Address'])
         ];
     }
     else {
         return [
             'type' => 'danger',
             'message' => 'There was an error. The room was not added. Please try it again.'
+        ];
+    }
+}
+
+function update_room($pdo, $room_info, $current_user){
+    /* Check if all fields are set */
+    if (
+        empty($room_info['Address']) or
+        empty($room_info['Type']) or
+        empty($room_info['Price']) or
+        empty($room_info['Size']) or
+        empty($room_info['Status']) or
+        empty($room_info['room_id'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Not all fields were filled in.'
+        ];
+    }
+
+    /* Check data type */
+    if (!is_numeric($room_info['Price'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You should enter a number in the field price.'
+        ];
+    }
+
+    if (!is_numeric($room_info['Size'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You should enter a number in the field size.'
+        ];
+    }
+
+    /* Get current room */
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE room_id = ?');
+    $stmt->execute([$room_info['room_id']]);
+    $room = $stmt->fetch();
+    $current_name = $room['address'];
+
+    /* Check if serie already exists */
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE address = ?');
+    $stmt->execute([$room_info['Address']]);
+    $room = $stmt->fetch();
+    if ($room_info['Address'] == $room['address'] and $room['address'] != $current_name){
+        return [
+            'type' => 'danger',
+            'message' => sprintf("The name of the room cannot be changed. %s already exists.", $room_info['address'])
+        ];
+    }
+
+    /* Update Room */
+    $stmt = $pdo->prepare("UPDATE rooms SET owner = ?, address = ?, type = ?, price = ?, size = ?, status = ?, WHERE room_id = ?");
+    $stmt->execute([
+        $current_user,
+        $room_info['Address'],
+        $room_info['Type'],
+        $room_info['Price'],
+        $room_info['Size'],
+        $room_info['Status'],
+        $room_info['room_id']
+    ]);
+    $updated = $stmt->rowCount();
+    if ($updated ==  1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Room '%s' was edited!", $room_info['Address'])
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'The room was not edited. No changes were detected.'
         ];
     }
 }
@@ -303,6 +383,27 @@ function get_user($pdo, $id){
     $user_name = $stmt->fetch();
     return sprintf("%s", htmlspecialchars($user_name['full_name']));
 
+}
+
+function user_information($pdo, $id){
+    $stmt = $pdo->prepare('SELECT * FROM users');
+    $stmt->execute([$id]);
+    $user = $stmt->fetch();
+    return $user;
+
+}
+
+function get_room_info($pdo, $room_id){
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE room_id = ?');
+    $stmt->execute([$room_id]);
+    $room_info = $stmt->fetch();
+    $room_info_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($room_info as $key => $value){
+        $room_info_exp[$key] = htmlspecialchars($value);
+    }
+    return $room_info_exp;
 }
 
 function count_users($pdo){
@@ -383,12 +484,76 @@ function login_user($pdo, $form_data){
         ];
     } else {
         session_start();
-        $_SESSION['user_id'] = $user_info['id'];
+        $_SESSION['user_id'] = $user_info['user_id'];
         $feedback = [
             'type' => 'success',
             'message' => sprintf('%s, you were logged in successfully!', get_user($pdo, $_SESSION['user_id']))
         ];
-        redirect(sprintf('/DDWT20/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+        redirect(sprintf('/ddwt20_project/myaccount/?error_msg=%s', json_encode($feedback)));
+    }
+}
+
+function get_rooms($pdo){
+    $stmt = $pdo->prepare('SELECT * FROM rooms');
+    $stmt->execute();
+    $rooms = $stmt->fetchAll();
+    $rooms_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($rooms as $key => $value){
+        foreach ($value as $user_key => $user_input) {
+            $rooms_exp[$key][$user_key] = htmlspecialchars($user_input);
+        }
+    }
+    return $rooms_exp;
+}
+
+function get_room_table($rooms, $pdo){
+    $table_exp = '
+    <table class="table table-hover">
+    <thead
+    <tr>
+        <th scope="col">Room address</th>
+        <th scope="col">Listed by</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>';
+    foreach($rooms as $key => $value){
+        $table_exp .= '
+        <tr>
+            <th scope="row">'.$value['address'].'</th>
+            <th scope="row">'.get_user($pdo, $value['owner']).'</th>
+            <td><a href="/ddwt20_project/rooms/?room_id='.$value['room_id'].'" role="button" class="btn btn-primary">More info</a></td>
+        </tr>
+        ';
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
+}
+
+function remove_serie($pdo, $room_id){
+    /* Get series info */
+    $room_info = get_room_info($pdo, $room_id);
+
+    /* Delete Serie */
+    $stmt = $pdo->prepare("DELETE FROM rooms WHERE room_id = ?");
+    $stmt->execute([$room_id]);
+    $deleted = $stmt->rowCount();
+    if ($deleted ==  1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("room '%s' was removed successfully!", $room_info['address'])
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'An error occurred. The room was not removed.'
+        ];
     }
 }
 

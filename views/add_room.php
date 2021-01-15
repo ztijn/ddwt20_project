@@ -61,10 +61,7 @@
                 <div class="form-group row">
                     <label for="inputStatus" class="col-sm-2 col-form-label">Status</label>
                     <div class="col-sm-10">
-                        <select class="form-control" id="Status" name="Status" required>
-                            <option value="available">Available</option>
-                            <option value="unavailable">Unavailable</option>
-                        </select>
+                        <input type="text" placeholder="available or unavailable" class="form-control" id="inputStatus" name="Status" value="<?php if (isset($room_info)){echo $room_info['status'];} ?>" required>
                     </div>
                 </div>
                 <?php if(isset($room_id)){ ?><input type="hidden" name="room_id" value="<?php echo $room_id ?>"><?php } ?>
@@ -80,7 +77,7 @@
         <!-- Right column -->
         <div class="col-md-4">
 
-
+            <?php include $right_column ?>
 
         </div>
 

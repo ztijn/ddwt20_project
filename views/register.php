@@ -44,16 +44,9 @@
                     <label for="inputPassword">Password</label>
                     <input type="password" class="form-control" id="inputPassword" placeholder="******" name="password" required>
                 </div>
-                <!--<div class="form-group">
-                    <label for="role">Choose a role:</label>
-                    <select class=form-control id="role" name="role" required>
-                        <option value="owner">Owner</option>
-                        <option value="tenant">Tenant</option>
-                    </select>
-                </div>-->
                 <div class="form-group">
                     <label for="inputRole">Role</label>
-                    <input type="text" class="form-control" id="inputRole" placeholder="Owner or Tenant" name="role" required>
+                    <input type="text" class="form-control" id="inputRole" placeholder="owner or tenant" name="role" required>
                 </div>
                 <div class="form-group">
                     <label for="inputFullname">Full name</label>
@@ -65,7 +58,7 @@
                 </div>
                 <div class="form-group">
                     <label for="inputBiography">Write something about yourself</label>
-                    <textarea class="form-control" id="inputBiography" name="biography">Write something here...</textarea>
+                    <input type="text" class="form-control" id="inputBiography" name="biography" placeholder="Write something here..." required>
                 </div>
                 <div class="form-group">
                     <label for="inputStudies">Enter your studies/profession</label>
@@ -83,7 +76,7 @@
                     <label for="inputPhonenum">Phone number</label>
                     <input type="tel" class="form-control" id="inputPhonenum" placeholder="0612345678" name="phone" required>
                 </div>
-                <button type="submit">Register now</button>
+                <button type="submit" class="btn btn-primary">Register now</button>
             </form>
 
         </div>
