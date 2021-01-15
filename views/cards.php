@@ -9,6 +9,9 @@
         <p>series listed</p>
         <a href="/ddwt20_project/add_room/" class="btn btn-primary">List yours</a>
     </div>
+</div>
+
+<div class="card">
     <!-- User count -->
     <div class="card-header">
         Users

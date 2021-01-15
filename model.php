@@ -160,13 +160,13 @@ function register_user($pdo, $form_data){
         empty($form_data['username']) or
         empty($form_data['password']) or
         empty($form_data['role']) or
-        empty($form_data['fullname']) or
-        empty($form_data['birthdate']) or
+        empty($form_data['full_name']) or
+        empty($form_data['birth_date']) or
         empty($form_date['biography']) or
-        empty($form_data['studies']) or
+        empty($form_data['stud_prof']) or
         empty($form_data['language']) or
         empty($form_data['email']) or
-        empty($form_data['phonenum'])
+        empty($form_data['phone'])
     ) {
         return [
             'type' => 'danger',
@@ -198,9 +198,11 @@ function register_user($pdo, $form_data){
     $password = password_hash($form_data['password'], PASSWORD_DEFAULT);
     /* Save user to the database */
     try {
-        $stmt = $pdo->prepare('INSERT INTO users (username, password, firstname, lastname) VALUES (?, ?, ?, ?)');
-        $stmt->execute([$form_data['username'], $password, $form_data['firstname'],
-            $form_data['lastname']]);
+        $stmt = $pdo->prepare('INSERT INTO users (username, password, role, full_name, birth_date, 
+                   biography, stud_prof, language, email, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$form_data['username'], $password, $form_data['role'],
+            $form_data['full_name'], $form_data['birth_date'], $form_data['biography'], $form_data['stud_prof'], $form_data['language.'],
+        $form_data['email'], $form_data['phone']]);
         $user_id = $pdo->lastInsertId();
     } catch (PDOException $e) {
         return [
@@ -389,3 +391,4 @@ function login_user($pdo, $form_data){
         redirect(sprintf('/DDWT20/week2/myaccount/?error_msg=%s', json_encode($feedback)));
     }
 }
+
