@@ -512,7 +512,11 @@ function remove_user($pdo, $user_id){
 }
 
 function check_login(){
-    session_start();
+    /* Check if a session already been started */
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+    
     if (isset($_SESSION['user_id'])) {
         return True;
     } else {
@@ -626,11 +630,11 @@ function get_room_table($rooms, $pdo){
     return $table_exp;
 }
 
-function remove_serie($pdo, $room_id){
-    /* Get series info */
+function remove_room($pdo, $room_id){
+    /* Get room info */
     $room_info = get_room_info($pdo, $room_id);
 
-    /* Delete Serie */
+    /* Delete Room */
     $stmt = $pdo->prepare("DELETE FROM rooms WHERE room_id = ?");
     $stmt->execute([$room_id]);
     $deleted = $stmt->rowCount();

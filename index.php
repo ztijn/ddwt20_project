@@ -407,7 +407,7 @@ elseif (new_route('/ddwt20_project/room/remove/', 'post')) {
         redirect('/ddwt20_project/login/');
     }
 
-    $feedback = remove_serie($database, $_POST['room_id']);
+    $feedback = remove_room($database, $_POST['room_id']);
     redirect(sprintf('/ddwt20_project/overview/?error_msg=%s', json_encode($feedback)));
 }
 
