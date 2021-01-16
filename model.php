@@ -422,6 +422,14 @@ function count_rooms($pdo){
     return $series;
 }
 
+function count_rooms_available($pdo){
+    /* room count */
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE status = "available"');
+    $stmt->execute();
+    $series = $stmt->rowCount();
+    return $series;
+}
+
 function logout_user(){
     /* empty the session and than destroy it */
     session_unset();
@@ -514,6 +522,21 @@ function login_user($pdo, $form_data){
 
 function get_rooms($pdo){
     $stmt = $pdo->prepare('SELECT * FROM rooms');
+    $stmt->execute();
+    $rooms = $stmt->fetchAll();
+    $rooms_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($rooms as $key => $value){
+        foreach ($value as $user_key => $user_input) {
+            $rooms_exp[$key][$user_key] = htmlspecialchars($user_input);
+        }
+    }
+    return $rooms_exp;
+}
+
+function get_rooms_available($pdo){
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE status = "available"');
     $stmt->execute();
     $rooms = $stmt->fetchAll();
     $rooms_exp = Array();
