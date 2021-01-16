@@ -176,7 +176,7 @@ elseif (new_route('/ddwt20_project/rooms/', 'get')) {
     $navigation = get_navigation($nav_template, 2);
 
     /* Page content */
-    $page_subtitle = sprintf("Information about room %s", $room_info['address']);
+    $page_subtitle = sprintf("Information about the room on %s", $room_info['address']);
     $address = $room_info['address'];
     $type = $room_info['type'];
     $price = $room_info['price'];
