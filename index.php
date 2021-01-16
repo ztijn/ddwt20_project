@@ -284,7 +284,7 @@ elseif (new_route('/ddwt20_project/add_room/', 'post')) {
 }
 
 /* Edit room GET */
-elseif (new_route('/ddwt20_project/edit/', 'get')) {
+elseif (new_route('/ddwt20_project/room/edit/', 'get')) {
     /* Check if logged in */
     if ( !check_login() ) {
         redirect('/ddwt20_project/login/');
@@ -319,7 +319,7 @@ elseif (new_route('/ddwt20_project/edit/', 'get')) {
 }
 
 /* Edit room POST */
-elseif (new_route('/ddwt20_project/edit/', 'post')) {
+elseif (new_route('/ddwt20_project/room/edit/', 'post')) {
     /* Check if logged in */
     if ( !check_login() ) {
         redirect('/ddwt20_project/login/');
@@ -364,7 +364,7 @@ elseif (new_route('/ddwt20_project/login/', 'post')) {
 }
 
 /* Remove room */
-elseif (new_route('/ddwt20_project/remove/', 'post')) {
+elseif (new_route('/ddwt20_project/room/remove/', 'post')) {
     /* Check if logged in */
     if ( !check_login() ) {
         redirect('/ddwt20_project/login/');
