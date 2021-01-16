@@ -64,6 +64,10 @@ if ( check_login() ) {
             'name' => 'My Account',
             'url' => '/ddwt20_project/myaccount/'
         ));
+
+    $right_column = use_template('cards_login');
+
+    $user_info = user_information($database, get_user_id());
 }
 
 /* Landing page */
@@ -205,19 +209,7 @@ elseif (new_route('/ddwt20_project/myaccount/', 'get')) {
 
     /* Page content */
     $page_subtitle = 'Here are the details of your current account:';
-    $user = get_user($database, get_user_id());
     $user_info = user_information($database, get_user_id());
-
-    /* user info */
-    $username = $user_info['username'];
-    $fullname = $user_info['full_name'];
-    $role = $user_info['role'];
-    $birthday = $user_info['birth_date'];
-    $bio = $user_info['biography'];
-    $stud_prof = $user_info['stud_prof'];
-    $language = $user_info['language'];
-    $email = $user_info['email'];
-    $phone = $user_info['phone'];
 
     /* Get error from POST route */
     if ( isset($_GET['error_msg']) ) {

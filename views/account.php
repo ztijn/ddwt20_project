@@ -25,7 +25,7 @@
 
     <div class="row">
 
-        <div class="col-md-12">
+        <div class="col-md-8">
             <!-- Error message -->
             <?php if (isset($error_msg)){echo $error_msg;} ?>
             <h1><?= $page_title ?></h1>
@@ -33,31 +33,49 @@
 
             <br/><br/>
             <h5>Personal Information</h5>
-            <table class="table table-striped">
-                <tr>
-                    <td>Username:</td>
-                    <td>Role:</td>
-                    <td>Fullname:</td>
-                    <td>Birthday:</td>
-                    <td>Biography:</td>
-                    <td>Stud/Prof:</td>
-                    <td>Language:</td>
-                    <td>Email:</td>
-                    <td>Phone:</td>
-                </tr>
-                <br/>
-                <tr>
-                    <td><?=$username?></td>
-                    <td><?=$role?></td>
-                    <td><?=$fullname?></td>
-                    <td><?=$birthday?></td>
-                    <td><?=$bio?></td>
-                    <td><?=$stud_prof?></td>
-                    <td><?=$language?></td>
-                    <td><?=$email?></td>
-                    <td><?=$phone?></td>
-                </tr>
-            </table>
+
+            <form action="/ddwt20_project/register/">
+                <div class="form-group">
+                    <label for="inputUsername">Username</label>
+                    <input type="text" class="form-control" id="inputUsername" value="<?=$user_info['username']?>" name="username" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword">Password</label>
+                    <input type="password" class="form-control" id="inputPassword" placeholder="" name="password" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="inputRole">Role</label>
+                    <input type="text" class="form-control" id="inputRole" value="<?=$user_info['role']?>" name="role" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="inputFullname">Full name</label>
+                    <input type="text" class="form-control" id="inputFullname" value="<?=$user_info['full_name']?>" name="full_name" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="inputBirthdate">Birth date</label>
+                    <input type="date" class="form-control" id="inputBirthdate" value="<?=$user_info['birth_date']?>" name="birth_date" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="inputBiography">Write something about yourself</label>
+                    <input type="text" class="form-control" id="inputBiography" name="biography" value="<?=$user_info['biography']?>" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="inputStudies">Enter your studies/profession</label>
+                    <input type="text" class="form-control" id="inputStudies" value="<?=$user_info['stud_prof']?>" name="stud_prof" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="inputLanguage">Enter your language</label>
+                    <input type="text" class="form-control" id="inputLanguage" value="<?=$user_info['language']?>" name="language" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail">E-mail address</label>
+                    <input type="email" class="form-control" id="inputEmail" value="<?=$user_info['email']?>" name="email" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="inputPhonenum">Phone number</label>
+                    <input type="tel" class="form-control" id="inputPhonenum" value="<?=$user_info['phone']?>" name="phone" readonly>
+                </div>
+            </form>
 
             <!-- Remove and edit button to edit profile of logged in user-->
 
@@ -67,7 +85,7 @@
                 </div>
 
                 <div class="col-sm-2">
-                    <form action="/ddwt20_project/myaccount/" method="GET">
+                    <form action="/ddwt20_project/myaccount/remove" method="POST">
                         <input type="hidden" value="<?= $_SESSION['user_id'] ?>" name="user_id">
                         <button type="submit" class="btn btn-danger">Delete profile</button>
                     </form>
@@ -75,22 +93,12 @@
             </div>
 
         </div>
-    </div>
 
-    <div class="pd-15">&nbsp;</div>
-
-    <div class="row">
-
+        <!-- Right column -->
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    Welcome, <?= $user ?>
-                </div>
-                <div class="card-body">
-                    <p>You're logged in.</p>
-                    <a href="/ddwt20_project/logout/" class="btn btn-primary">Logout</a>
-                </div>
-            </div>
+
+            <?php include $right_column ?>
+
         </div>
     </div>
 </div>
