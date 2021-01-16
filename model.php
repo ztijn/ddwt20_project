@@ -382,7 +382,6 @@ function get_user($pdo, $id){
     $stmt->execute([$id]);
     $user_name = $stmt->fetch();
     return sprintf("%s", htmlspecialchars($user_name['full_name']));
-
 }
 
 function user_information($pdo, $id){
@@ -390,7 +389,6 @@ function user_information($pdo, $id){
     $stmt->execute([$id]);
     $user = $stmt->fetch();
     return $user;
-
 }
 
 function get_room_info($pdo, $room_id){
@@ -442,6 +440,56 @@ function logout_user(){
     /* Redirect to homepage */
     redirect(sprintf('/ddwt20_project/?error_msg=%s', json_encode($feedback)));
 }
+
+function edit_user($pdo, $user_info){
+
+    /* Check if all fields are set */
+    if (
+        empty($user_info['username']) or
+        empty($user_info['role']) or
+        empty($user_info['full_name']) or
+        empty($user_info['birth_date']) or
+        empty($user_info['biography']) or
+        empty($user_info['stud_prof']) or
+        empty($user_info['language']) or
+        empty($user_info['email']) or
+        empty($user_info['phone'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Not all fields were filled in.'
+        ];
+    }
+
+    /* Update user */
+    $stmt = $pdo->prepare("UPDATE users SET username = ?, role = ?, full_name = ?, birth_date = ?, biography = ?, stud_prof = ?, language = ?, email = ?, phone = ? WHERE user_id = ?");
+    $stmt->execute([
+        $user_info['username'],
+        $user_info['role'],
+        $user_info['full_name'],
+        $user_info['birth_date'],
+        $user_info['biography'],
+        $user_info['stud_prof'],
+        $user_info['language'],
+        $user_info['email'],
+        $user_info['phone'],
+        $_SESSION['user_id']
+    ]);
+    $updated = $stmt->rowCount();
+    if ($updated ==  1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Your account was edited!")
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'Your account was not edited. No changes were detected.'
+        ];
+    }
+}
+
 function remove_user($pdo, $user_id){
     /* Delete User */
     $stmt = $pdo->prepare("DELETE FROM users WHERE user_id = ?");
@@ -462,6 +510,7 @@ function remove_user($pdo, $user_id){
         ];
     }
 }
+
 function check_login(){
     session_start();
     if (isset($_SESSION['user_id'])) {

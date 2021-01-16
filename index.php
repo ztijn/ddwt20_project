@@ -110,6 +110,7 @@ elseif (new_route('/ddwt20_project/register/', 'get')){
 
     /* Page content */
     $page_subtitle = 'Registration page';
+    $form_action = "/ddwt20_project/register/";
 
     /* Get error msg from POST route */
     if ( isset($_GET['error_msg']) ) {
@@ -118,6 +119,7 @@ elseif (new_route('/ddwt20_project/register/', 'get')){
     /* Choose Template */
     include use_template('register');
 }
+
 
 /* Register POST */
 elseif (new_route('/ddwt20_project/register/', 'POST')) {
@@ -218,6 +220,41 @@ elseif (new_route('/ddwt20_project/myaccount/', 'get')) {
 
     /* Choose Template */
     include use_template('account');
+}
+/* edit accout GET */
+elseif (new_route('/ddwt20_project/myaccount/edit', 'get')){
+    if ( !check_login() ){
+        redirect('/ddwt20_project/login/');
+    }
+
+    /* Page info */
+    $page_title = 'Edit Account';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/ddwt20_project/', False),
+        'My Account' => na('/ddwt20_project/myaccount', False),
+        'Edit' => na('/ddwt20_project/myaccount/edit', True)
+    ]);
+    $navigation = get_navigation($nav_template, 5);
+    $form_action = "/ddwt20_project/myaccount/edit";
+
+    /* Page content */
+    $page_subtitle = 'Edit your personal information';
+
+    /* Choose Template */
+    include use_template('register');
+}
+
+/* Edit account POST */
+elseif (new_route('/ddwt20_project/myaccount/edit', 'post')){
+    if ( !check_login() ){
+        redirect('/ddwt20_project/login/');
+    }
+
+    /* edit account in database */
+    $feedback = edit_user($database, $_POST);
+    /* Redirect to home route */
+    redirect(sprintf('/ddwt20_project/myaccount/?error_msg=%s',
+        json_encode($feedback)));
 }
 
 /* Remove account */

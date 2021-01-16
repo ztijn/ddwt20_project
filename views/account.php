@@ -81,7 +81,7 @@
 
             <div class="row">
                 <div class="col-sm-2">
-                    <a href="/ddwt20_project/myaccount/?user_id=<?= $_SESSION['user_id']?>" role="button" class="btn btn-warning">Edit profile</a>
+                    <a href="/ddwt20_project/myaccount/edit" role="button" class="btn btn-warning">Edit profile</a>
                 </div>
 
                 <div class="col-sm-2">
