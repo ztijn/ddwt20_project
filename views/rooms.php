@@ -62,10 +62,10 @@
 
             <div class="row">
                 <div class="col-sm-2">
-                    <a href="/ddwt20_project/edit/?room_id=<?= $room_id ?>" role="button" class="btn btn-warning">Edit</a>
+                    <a href="/ddwt20_project/room/edit/?room_id=<?= $room_id ?>" role="button" class="btn btn-warning">Edit</a>
                 </div>
                 <div class="col-sm-2">
-                    <form action="/ddwt20_project/remove/" method="POST">
+                    <form action="/ddwt20_project/room/remove/" method="POST">
                         <input type="hidden" value="<?= $room_id ?>" name="room_id">
                         <button type="submit" class="btn btn-danger">Remove</button>
                     </form>
