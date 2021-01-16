@@ -274,9 +274,10 @@ elseif (new_route('/ddwt20_project/myaccount/remove/', 'post')) {
 /* Logout GET*/
 elseif (new_route('/ddwt20_project/logout/', 'GET')){
     /* logging out a user by clicking */
-    if (!isset($_SESSION))
-    {session_start();}
-    $logout = logout_user();
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+    logout_user();
 }
 
 /* add room get */
