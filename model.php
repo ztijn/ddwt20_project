@@ -434,7 +434,26 @@ function logout_user(){
     /* Redirect to homepage */
     redirect(sprintf('/ddwt20_project/?error_msg=%s', json_encode($feedback)));
 }
-
+function remove_user($pdo, $user_id){
+    /* Delete User */
+    $stmt = $pdo->prepare("DELETE FROM users WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $deleted = $stmt->rowCount();
+    if ($deleted ==  1) {
+        session_unset();
+        session_destroy();
+        return [
+            'type' => 'success',
+            'message' => sprintf("Bye, your account has been removed!")
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'An error occurred. Your account has not been removed.'
+        ];
+    }
+}
 function check_login(){
     session_start();
     if (isset($_SESSION['user_id'])) {

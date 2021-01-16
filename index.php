@@ -220,6 +220,20 @@ elseif (new_route('/ddwt20_project/myaccount/', 'get')) {
     include use_template('account');
 }
 
+/* Remove account */
+elseif (new_route('/ddwt20_project/myaccount/remove/', 'post')) {
+    if ( !check_login() ){
+        redirect('/ddwt20_project/login/');
+    }
+
+    /* Remove account in database */
+    $user_id = $_POST['user_id'];
+    $feedback = remove_user($database, $user_id);
+    /* Redirect to home route */
+    redirect(sprintf('/ddwt20_project/?error_msg=%s',
+        json_encode($feedback)));
+}
+
 /* Logout GET*/
 elseif (new_route('/ddwt20_project/logout/', 'GET')){
     /* logging out a user by clicking */
