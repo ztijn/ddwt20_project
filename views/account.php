@@ -40,10 +40,6 @@
                     <input type="text" class="form-control" id="inputUsername" value="<?=$user_info['username']?>" name="username" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="inputPassword">Password</label>
-                    <input type="password" class="form-control" id="inputPassword" placeholder="" name="password" readonly>
-                </div>
-                <div class="form-group">
                     <label for="inputRole">Role</label>
                     <input type="text" class="form-control" id="inputRole" value="<?=$user_info['role']?>" name="role" readonly>
                 </div>
