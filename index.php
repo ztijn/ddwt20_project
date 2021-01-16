@@ -48,6 +48,9 @@ $nav_template = Array(
     ));
 
 if ( check_login() ) {
+    $right_column = use_template('cards_login');
+    $user_info = user_information($database, get_user_id());
+
     $nav_template = Array(
         1 => Array(
             'name' => 'Home',
@@ -65,10 +68,6 @@ if ( check_login() ) {
             'name' => 'My Account',
             'url' => '/ddwt20_project/myaccount/'
         ));
-
-    $right_column = use_template('cards_login');
-
-    $user_info = user_information($database, get_user_id());
 }
 
 /* Landing page */
