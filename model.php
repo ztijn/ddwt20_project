@@ -690,7 +690,7 @@ function remove_room($pdo, $room_id){
 
 function optin_room($pdo, $room_id, $user_id){
     /* Get room info */
-    $room_info = get_room_info($pdo, $room_id);
+    $room_info = room_information($pdo, $room_id);
 
     /* Check if optin already exists */
     try {
