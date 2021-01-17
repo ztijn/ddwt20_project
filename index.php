@@ -398,7 +398,7 @@ elseif (new_route('/ddwt20_project/myrooms/', 'get')) {
     $page_subtitle = 'Rooms owned';
     $page_content = 'Here you find all rooms that you have listed as an owner:';
     $user_info = user_information($database, get_user_id());
-    $left_content = get_rooms_owned_table(get_rooms_owned($user_info['full_name'], $database));
+    $left_content = get_rooms_owned_table(get_rooms_owned($_SESSION['user_id'], $database));
 
 
     /* Get error from POST route */
