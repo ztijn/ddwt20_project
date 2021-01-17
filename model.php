@@ -772,7 +772,7 @@ function get_rooms_optin_table($rooms_optin, $pdo){
                 <td><a href="/ddwt20_project/rooms/?room_id='.$value['room'].'" role="button" class="btn btn-primary">More info</a></td>
                 <td>
                     <form action="/ddwt20_project/myoptins/remove/" method="POST">
-                        <input type="hidden" value="<?= $room_id ?>" name="optin_id">
+                        <input type="hidden" value="'  .$value['optin_id'].  '" name="optin_id">
                         <button type="submit" class="btn btn-danger">Undo optin</button>
                    </form>
                 </td>
@@ -801,7 +801,7 @@ function get_optin_info($pdo, $optin_id){
 }
 
 function optins_information($pdo, $id){
-    $stmt = $pdo->prepare('SELECT * FROM optins where optin_id = ?');
+    $stmt = $pdo->prepare('SELECT * FROM optins WHERE optin_id = ?');
     $stmt->execute([$id]);
     $room = $stmt->fetch();
     return $room;
