@@ -124,7 +124,7 @@ function get_error($feedback){
 function get_navigation($template, $active_id){
     $navigation_exp = '
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand">Groningen room network</a>
+    <a class="navbar-brand">Groningen Room Network</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
     </button>
@@ -302,8 +302,8 @@ function update_room($pdo, $room_info, $current_user){
         empty($room_info['Type']) or
         empty($room_info['Price']) or
         empty($room_info['Size']) or
-        empty($room_info['Status']) or
-        empty($room_info['room_id'])
+        empty($room_info['Status'])
+
     ) {
         return [
             'type' => 'danger',
@@ -344,7 +344,7 @@ function update_room($pdo, $room_info, $current_user){
     }
 
     /* Update Room */
-    $stmt = $pdo->prepare("UPDATE rooms SET owner = ?, address = ?, type = ?, price = ?, size = ?, status = ?, WHERE room_id = ?");
+    $stmt = $pdo->prepare("UPDATE rooms SET owner = ?, address = ?, type = ?, price = ?, size = ?, status = ? WHERE room_id = ?");
     $stmt->execute([
         $current_user,
         $room_info['Address'],
@@ -352,7 +352,7 @@ function update_room($pdo, $room_info, $current_user){
         $room_info['Price'],
         $room_info['Size'],
         $room_info['Status'],
-        $room_info['room_id']
+        $room_info['room_id'],
     ]);
     $updated = $stmt->rowCount();
     if ($updated ==  1) {
@@ -391,17 +391,11 @@ function user_information($pdo, $id){
     return $user;
 }
 
-function get_room_info($pdo, $room_id){
-    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE room_id = ?');
-    $stmt->execute([$room_id]);
-    $room_info = $stmt->fetch();
-    $room_info_exp = Array();
-
-    /* Create array with htmlspecialchars */
-    foreach ($room_info as $key => $value){
-        $room_info_exp[$key] = htmlspecialchars($value);
-    }
-    return $room_info_exp;
+function room_information($pdo, $id){
+    $stmt = $pdo->prepare('SELECT * FROM rooms where room_id = ?');
+    $stmt->execute([$id]);
+    $room = $stmt->fetch();
+    return $room;
 }
 
 function count_users($pdo){
@@ -674,7 +668,7 @@ function get_rooms_owned_table($rooms_owned){
 
 function remove_room($pdo, $room_id){
     /* Get room info */
-    $room_info = get_room_info($pdo, $room_id);
+    $room_info = room_information($pdo, $room_id);
 
     /* Delete Room */
     $stmt = $pdo->prepare("DELETE FROM rooms WHERE room_id = ?");

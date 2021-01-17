@@ -172,7 +172,7 @@ elseif (new_route('/ddwt20_project/rooms/', 'get')) {
     }
     /* Get rooms from db */
     $room_id = $_GET['room_id'];
-    $room_info = get_room_info($database, $room_id);
+    $room_info = room_information($database, $room_id);
 
     /* get the 'added by' from the database */
     $user_id = $room_info['owner'];
@@ -343,7 +343,7 @@ elseif (new_route('/ddwt20_project/room/edit/', 'get')) {
 
     /* Get room info from db */
     $room_id = $_GET['room_id'];
-    $room_info = get_room_info($database, $room_id);
+    $room_info = room_information($database, $room_id);
 
     /* Page info */
     $page_title = 'Edit Rooms';
@@ -358,7 +358,7 @@ elseif (new_route('/ddwt20_project/room/edit/', 'get')) {
     $page_subtitle = sprintf("Edit %s", $room_info['address']);
     $page_content = 'Edit the room below.';
     $submit_btn = "Edit Rooms";
-    $form_action = '/ddwt20_project/edit/';
+    $form_action = '/ddwt20_project/room/edit/';
 
     /* Get error from POST route */
     if ( isset($_GET['error_msg']) ) {
@@ -377,7 +377,7 @@ elseif (new_route('/ddwt20_project/room/edit/', 'post')) {
     }
 
     $feedback = update_room($database, $_POST, $_SESSION['user_id']);
-    redirect(sprintf('/ddwt20_project/edit/?error_msg=%s&room_id=%d', json_encode($feedback), $_POST['room_id']));
+    redirect(sprintf('/ddwt20_project/room/edit/?error_msg=%s&room_id=%d', json_encode($feedback), $_POST['room_id']));
 }
 
 /* My rooms GET */

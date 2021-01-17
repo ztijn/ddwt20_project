@@ -37,25 +37,25 @@
                 <div class="form-group row">
                     <label for="inputAddress" class="col-sm-2 col-form-label">Address</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputAddress" name="Address" value="<?php if (isset($room_info)){echo $room_info['address'];} ?>" required>
+                        <input type="text" placeholder="Winkelstraat 5 Groningen 1234AB" class="form-control" id="inputAddress" name="Address" value="<?php if (isset($room_info)){echo $room_info['address'];} ?>" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="inputType" class="col-sm-2 col-form-label">Type</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputType" name="Type" value="<?php if (isset($room_info)){echo $room_info['type'];} ?>" required>
+                        <input type="text" placeholder="apartment" class="form-control" id="inputType" name="Type" value="<?php if (isset($room_info)){echo $room_info['type'];} ?>" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="inputPrice" class="col-sm-2 col-form-label">Price</label>
                     <div class="col-sm-10">
-                        <input type="number" class="form-control" id="inputPrice" name="Price" value="<?php if (isset($room_info)){echo $room_info['price'];} ?>" required>
+                        <input type="number" placeholder="267000" class="form-control" id="inputPrice" name="Price" value="<?php if (isset($room_info)){echo $room_info['price'];} ?>" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="inputSize" class="col-sm-2 col-form-label">Size</label>
                     <div class="col-sm-10">
-                        <input type="number" class="form-control" id="inputSize" name="Size" value="<?php if (isset($room_info)){echo $room_info['size'];} ?>" required>
+                        <input type="number" placeholder="120" class="form-control" id="inputSize" name="Size" value="<?php if (isset($room_info)){echo $room_info['size'];} ?>" required>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 <?php if(isset($room_id)){ ?><input type="hidden" name="room_id" value="<?php echo $room_id ?>"><?php } ?>
-                <?php if(isset($room_id)){ ?><input type="hidden" name="user_id" value="<?php echo $room_id ?>"><?php } ?>
+                <?php if(isset($current_user)){ ?><input type="hidden" name="room_id" value="<?php echo $current_user ?>"><?php } ?>
                 <div class="form-group row">
                     <div class="col-sm-10">
                         <button type="submit" class="btn btn-primary"><?= $submit_btn ?></button>
