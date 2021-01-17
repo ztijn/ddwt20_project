@@ -692,7 +692,7 @@ function optin_room($pdo, $room_id, $user_id){
     /* Get room info */
     $room_info = room_information($pdo, $room_id);
 
-    /* Check if optin already exists */
+    /* Check if user already opted in tot the room */
     try {
         $stmt = $pdo->prepare('SELECT * FROM optins WHERE tenant = ? AND room = ? ');
         $stmt->execute([$user_id, $room_info['room_id']]);
@@ -831,3 +831,26 @@ function remove_optin($pdo, $optin_id){
     }
 }
 
+function optin_owners($pdo){
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE owner = ?');
+    $stmt->execute([$_SESSION['user_id']]);
+    $optin_info = $stmt->fetch();
+    $optin_info_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($optin_info as $key => $value){
+        $optin_info_exp[$key] = htmlspecialchars($value);
+    }
+
+    $stmt2 = $pdo -> prepare('SELECT * FROM optins WHERE room = ?');
+    $stmt2->execute([$optin_info_exp['room_id']]);
+    $optin_info2 = $stmt2->fetch();
+    $optin_info_exp2 = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($optin_info2 as $key => $value){
+        $optin_info_exp2[$key] = htmlspecialchars($value);
+    }
+
+    return $optin_info_exp2;
+}

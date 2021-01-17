@@ -56,6 +56,12 @@
                     <td><?= $status ?></td>
                 </tr>
                 </tbody>
+                <?php if ($display_buttons) { ?>
+                <tr>
+                    <th scope="row">Interested tenants</th>
+                    <td><?= $tenants ?></td>
+                </tr>
+                <?php } ?>
             </table>
 
             <!-- Remove and edit button for the owner of the listed room -->
