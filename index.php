@@ -494,7 +494,7 @@ elseif (new_route('/ddwt20_project/myoptins/', 'get')) {
     $user_info = user_information($database, get_user_id());
     $room_id = $_GET['room_id'];
     $room_info = room_information($database, $room_id);
-    $left_content = get_rooms_optin_table(get_rooms_optin($_SESSION['user_id'], $database), $room_info['room_id']);
+    $left_content = get_rooms_optin_table(get_rooms_optin($_SESSION['user_id'], $database), $database);
 
 
     /* Get error from POST route */
@@ -506,7 +506,7 @@ elseif (new_route('/ddwt20_project/myoptins/', 'get')) {
     include use_template('myoptins');
 }
 
-/* Remove room */
+/* Remove optin */
 elseif (new_route('/ddwt20_project/myoptins/remove/', 'post')) {
     /* Check if logged in */
     if ( !check_login() ) {

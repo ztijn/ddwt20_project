@@ -749,7 +749,15 @@ function get_rooms_optin($user_info, $pdo){
 
 }
 
-function get_rooms_optin_table($rooms_optin, $rooms){
+function get_room_address($pdo, $id){
+    $stmt = $pdo->prepare('SELECT address FROM rooms where room_id = ?');
+    $stmt->execute([$id]);
+    $room_info = $stmt->fetch();
+    return sprintf("%s", htmlspecialchars($room_info['address']));
+
+}
+
+function get_rooms_optin_table($rooms_optin, $pdo){
     $table_exp = '
     <table class="table table-hover">
     <thead
@@ -762,8 +770,8 @@ function get_rooms_optin_table($rooms_optin, $rooms){
     foreach($rooms_optin as $key => $value){
         $table_exp .= '
             <tr>
-                <th scope="row">' . $rooms['address'] . '</th>
-                <td><a href="/ddwt20_project/rooms/?room_id=' . $value['room'] . '" role="button" class="btn btn-primary">More info</a></td>
+                <th scope="row">'.get_room_address($pdo, $value['room']).'</th>
+                <td><a href="/ddwt20_project/rooms/?room_id='.$value['room'].'" role="button" class="btn btn-primary">More info</a></td>
                 <td>
                     <form action="/ddwt20_project/myoptins/remove/" method="POST">
                         <input type="hidden" value="<?= $room_id ?>" name="optin_id">
@@ -794,9 +802,16 @@ function get_optin_info($pdo, $optin_id){
     return $optin_info_exp;
 }
 
+function optins_information($pdo, $id){
+    $stmt = $pdo->prepare('SELECT * FROM optins where optin_id = ?');
+    $stmt->execute([$id]);
+    $room = $stmt->fetch();
+    return $room;
+}
+
 function remove_optin($pdo, $optin_id){
     /* Get room info */
-    $optin_info = get_optin_info($pdo, $optin_id);
+    $optin_info = optins_information($pdo, $optin_id);
 
     /* Delete Room */
     $stmt = $pdo->prepare("DELETE FROM optins WHERE optin_id = ?");
