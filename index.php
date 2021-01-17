@@ -492,7 +492,9 @@ elseif (new_route('/ddwt20_project/myoptins/', 'get')) {
     $page_subtitle = 'Rooms opted in';
     $page_content = 'Here you find all rooms that you opted into as a tenant';
     $user_info = user_information($database, get_user_id());
-    $left_content = get_rooms_optin_table(get_rooms_optin($_SESSION['user_id'], $database), get_rooms($database));
+    $room_id = $_GET['room_id'];
+    $room_info = room_information($database, $room_id);
+    $left_content = get_rooms_optin_table(get_rooms_optin($_SESSION['user_id'], $database), $room_info['room_id']);
 
 
     /* Get error from POST route */

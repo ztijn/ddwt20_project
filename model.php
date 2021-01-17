@@ -760,20 +760,18 @@ function get_rooms_optin_table($rooms_optin, $rooms){
     </thead>
     <tbody>';
     foreach($rooms_optin as $key => $value){
-        foreach($rooms as $key2 => $value2){
-            $table_exp .= '
+        $table_exp .= '
             <tr>
-                <th scope="row">' . $value2['address'] . '</th>
+                <th scope="row">' . $rooms['address'] . '</th>
                 <td><a href="/ddwt20_project/rooms/?room_id=' . $value['room'] . '" role="button" class="btn btn-primary">More info</a></td>
                 <td>
                     <form action="/ddwt20_project/myoptins/remove/" method="POST">
                         <input type="hidden" value="<?= $room_id ?>" name="optin_id">
                         <button type="submit" class="btn btn-danger">Undo optin</button>
-                    </form>
+                   </form>
                 </td>
             </tr>
-            ';
-        }
+        ';
     }
     $table_exp .= '
     </tbody>
