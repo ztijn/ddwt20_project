@@ -196,6 +196,10 @@ elseif (new_route('/ddwt20_project/rooms/', 'get')) {
 
     $navigation = get_navigation($nav_template, 2);
 
+    $optin_tenants = optin_owners($database);
+    $tenants_name = user_information($database, $optin_tenants['tenant']);
+
+
     /* Page content */
     $page_subtitle = sprintf("Information about the room on %s", $room_info['address']);
     $user_info = user_information($database, get_user_id());
@@ -204,6 +208,7 @@ elseif (new_route('/ddwt20_project/rooms/', 'get')) {
     $price = $room_info['price'];
     $size = $room_info['size'];
     $status = $room_info['status'];
+    $tenants = $tenants_name['full_name'];
 
     /* Checking if user_id is equal to current logged in user */
     if (get_user_id() === $user_id) {
@@ -496,8 +501,8 @@ elseif (new_route('/ddwt20_project/myoptins/', 'get')) {
     $page_subtitle = 'Rooms opted in';
     $page_content = 'Here you find all rooms that you opted into as a tenant';
     $user_info = user_information($database, get_user_id());
-    $room_id = $_GET['room_id'];
-    $room_info = room_information($database, $room_id);
+    /*$room_id = $_GET['room_id'];
+    $room_info = room_information($database, $room_id); */
     $left_content = get_rooms_optin_table(get_rooms_optin($_SESSION['user_id'], $database), $database);
 
 

@@ -772,7 +772,7 @@ function get_rooms_optin_table($rooms_optin, $pdo){
                 <td><a href="/ddwt20_project/rooms/?room_id='.$value['room'].'" role="button" class="btn btn-primary">More info</a></td>
                 <td>
                     <form action="/ddwt20_project/myoptins/remove/" method="POST">
-                        <input type="hidden" value="<?= $room_id ?>" name="optin_id">
+                        <input type="hidden" value="'  .$value['optin_id'].  '" name="optin_id">
                         <button type="submit" class="btn btn-danger">Undo optin</button>
                    </form>
                 </td>
@@ -784,6 +784,7 @@ function get_rooms_optin_table($rooms_optin, $pdo){
     </table>
     ';
     return $table_exp;
+
 }
 
 function get_optin_info($pdo, $optin_id){
@@ -800,7 +801,7 @@ function get_optin_info($pdo, $optin_id){
 }
 
 function optins_information($pdo, $id){
-    $stmt = $pdo->prepare('SELECT * FROM optins where optin_id = ?');
+    $stmt = $pdo->prepare('SELECT * FROM optins WHERE optin_id = ?');
     $stmt->execute([$id]);
     $room = $stmt->fetch();
     return $room;
@@ -826,6 +827,30 @@ function remove_optin($pdo, $optin_id){
             'message' => 'An error occurred. The optin was not undone.'
         ];
     }
+}
+
+function optin_owners($pdo){
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE owner = ?');
+    $stmt->execute([$_SESSION['user_id']]);
+    $optin_info = $stmt->fetch();
+    $optin_info_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($optin_info as $key => $value){
+        $optin_info_exp[$key] = htmlspecialchars($value);
+    }
+
+    $stmt2 = $pdo -> prepare('SELECT * FROM optins WHERE room = ?');
+    $stmt2->execute([$optin_info_exp['room_id']]);
+    $optin_info2 = $stmt2->fetch();
+    $optin_info_exp2 = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($optin_info2 as $key => $value){
+        $optin_info_exp2[$key] = htmlspecialchars($value);
+    }
+
+    return $optin_info_exp2;
 }
 
 function get_chats($pdo, $user_id){
