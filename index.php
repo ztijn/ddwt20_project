@@ -545,8 +545,6 @@ elseif (new_route('/ddwt20_project/messages/', 'get')) {
 
     $page_content = get_chats_table(get_chats($database, $_SESSION['user_id']), $database);
 
-
-
     /* Get error from POST route */
     if ( isset($_GET['error_msg']) ) {
         $error_msg = get_error($_GET['error_msg']);
