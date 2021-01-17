@@ -44,11 +44,11 @@
                 <div class="form-group">
                     <label for="inputPassword">Password</label>
                     <input type="password" class="form-control" id="inputPassword" placeholder="" name="password"  required>
-                </div> <?php } ?>
+                </div>
                 <div class="form-group">
                     <label for="inputRole">Role</label>
                     <input type="text" class="form-control" id="inputRole" placeholder="owner or tenant" name="role" <?php if (isset($user_info)){ ?> value="<?= $user_info['role'] ?>"<?php } ?> required>
-                </div>
+                </div> <?php } ?>
                 <div class="form-group">
                     <label for="inputFullname">Full name</label>
                     <input type="text" class="form-control" id="inputFullname" placeholder="Jan Janssen" name="full_name" <?php if (isset($user_info)){ ?> value="<?= $user_info['full_name'] ?>"<?php } ?> required>
