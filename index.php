@@ -30,14 +30,6 @@ $nav_template = Array(
         'name' => 'Overview',
         'url' => '/ddwt20_project/overview/'
     ),
-    /*3 => Array(
-        'name' => 'Add rooms',
-        'url' => '/ddwt20_project/add_room/'
-    ),
-    4 => Array(
-        'name' => 'My Account',
-        'url' => '/ddwt20_project/myaccount/'
-    ),*/
     5 => Array(
         'name' => 'Register',
         'url' => '/ddwt20_project/register/'
@@ -50,25 +42,46 @@ $nav_template = Array(
 if ( check_login() ) {
     $right_column = use_template('cards_login');
     $user_info = user_information($database, get_user_id());
+    if ( $user_info['role'] == 'tenant'){
+        $nav_template = Array(
+            1 => Array(
+                'name' => 'Home',
+                'url' => '/ddwt20_project/'
+            ),
+            2 => Array(
+                'name' => 'Overview',
+                'url' => '/ddwt20_project/overview/'
+            ),
+            4 => Array(
+                'name' => 'My Account',
+                'url' => '/ddwt20_project/myaccount/'
+            ));
+    } else {
+        $nav_template = Array(
+            1 => Array(
+                'name' => 'Home',
+                'url' => '/ddwt20_project/'
+            ),
+            2 => Array(
+                'name' => 'Overview',
+                'url' => '/ddwt20_project/overview/'
+            ),
+            3 => Array(
+                'name' => 'Add Rooms',
+                'url' => '/ddwt20_project/add_room/'
+            ),
+            4 => Array(
+                'name' => 'My Account',
+                'url' => '/ddwt20_project/myaccount/'
+            ),
+            7 => Array(
+                'name' => 'My Rooms',
+                'url' => '/ddwt20_project/myrooms/'
+            ));
 
-    $nav_template = Array(
-        1 => Array(
-            'name' => 'Home',
-            'url' => '/ddwt20_project/'
-        ),
-        2 => Array(
-            'name' => 'Overview',
-            'url' => '/ddwt20_project/overview/'
-        ),
-        3 => Array(
-            'name' => 'Add rooms',
-            'url' => '/ddwt20_project/add_room/'
-        ),
-        4 => Array(
-            'name' => 'My Account',
-            'url' => '/ddwt20_project/myaccount/'
-        ));
+    }
 }
+
 
 /* Landing page */
 if (new_route('/ddwt20_project/', 'get')) {
@@ -365,6 +378,38 @@ elseif (new_route('/ddwt20_project/room/edit/', 'post')) {
     $feedback = update_room($database, $_POST, $_SESSION['user_id']);
     redirect(sprintf('/ddwt20_project/edit/?error_msg=%s&room_id=%d', json_encode($feedback), $_POST['room_id']));
 }
+
+/* My rooms GET */
+elseif (new_route('/ddwt20_project/myrooms/', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+    /* Page info */
+    $page_title = 'My rooms';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/ddwt20_project/', False),
+        'My rooms' => na('/ddwt20_project/myrooms/', True)
+    ]);
+
+    $navigation = get_navigation($nav_template, 7);
+
+    /* Page content */
+    $page_subtitle = 'Rooms owned';
+    $page_content = 'Here you find all rooms that you have listed as an owner:';
+    $user_info = user_information($database, get_user_id());
+    $left_content = get_rooms_owned_table(get_rooms_owned($user_info['full_name'], $database));
+
+
+    /* Get error from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('myrooms');
+}
+
 
 /* Login GET */
 elseif (new_route('/ddwt20_project/login/', 'get')) {

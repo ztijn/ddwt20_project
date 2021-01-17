@@ -630,6 +630,48 @@ function get_room_table($rooms, $pdo){
     return $table_exp;
 }
 
+function get_rooms_owned($user_info, $pdo){
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE owner = ?');
+    $stmt->execute([$user_info]);
+    $rooms = $stmt->fetchAll();
+    $rooms_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($rooms as $key => $value){
+        foreach ($value as $user_key => $user_input) {
+            $rooms_exp[$key][$user_key] = htmlspecialchars($user_input);
+        }
+    }
+    return $rooms_exp;
+
+}
+
+function get_rooms_owned_table($rooms_owned){
+    $table_exp = '
+    <table class="table table-hover">
+    <thead
+    <tr>
+        <th scope="col">Room address</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>';
+    foreach($rooms_owned as $key => $value){
+        $table_exp .= '
+        <tr>
+            <th scope="row">'.$value['address'].'</th>
+            <td><a href="/ddwt20_project/rooms/?room_id='.$value['room_id'].'" role="button" class="btn btn-primary">More info</a></td>
+        </tr>
+        ';
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
+
+}
+
 function remove_room($pdo, $room_id){
     /* Get room info */
     $room_info = get_room_info($pdo, $room_id);
