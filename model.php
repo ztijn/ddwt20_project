@@ -688,3 +688,133 @@ function remove_room($pdo, $room_id){
     }
 }
 
+function optin_room($pdo, $room_id, $user_id){
+    /* Get room info */
+    $room_info = get_room_info($pdo, $room_id);
+
+    /* Check if optin already exists */
+    try {
+        $stmt = $pdo->prepare('SELECT * FROM optins WHERE tenant = ? AND room = ? ');
+        $stmt->execute([$user_id, $room_info['room_id']]);
+        $user_exists = $stmt->rowCount();
+    } catch (\PDOException $e) {
+        return [
+            'type' => 'danger',
+            'message' => sprintf('There was an error: %s', $e->getMessage())
+        ];
+    }
+
+    /* Return error message for existing username */
+    if ( !empty($user_exists) ) {
+        return [
+            'type' => 'danger',
+            'message' => 'You already opted in to this room'
+        ];
+    }
+
+    /* Add room */
+    $stmt = $pdo->prepare("INSERT INTO optins (room, tenant) VALUES (?, ?)");
+    $stmt->execute([
+        $room_info['room_id'],
+        $user_id
+    ]);
+    $inserted = $stmt->rowCount();
+    if ($inserted ==  1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("You succesfully opted in to the room!")
+        ];
+    }
+    else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. The optin did not succeed. Please try it again.'
+        ];
+    }
+}
+
+function get_rooms_optin($user_info, $pdo){
+    $stmt = $pdo->prepare('SELECT * FROM optins WHERE tenant = ?');
+    $stmt->execute([$user_info]);
+    $rooms = $stmt->fetchAll();
+    $rooms_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($rooms as $key => $value){
+        foreach ($value as $user_key => $user_input) {
+            $rooms_exp[$key][$user_key] = htmlspecialchars($user_input);
+        }
+    }
+    return $rooms_exp;
+
+}
+
+function get_rooms_optin_table($rooms_optin, $rooms){
+    $table_exp = '
+    <table class="table table-hover">
+    <thead
+    <tr>
+        <th scope="col">Room address</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>';
+    foreach($rooms_optin as $key => $value){
+        foreach($rooms as $key2 => $value2){
+            $table_exp .= '
+            <tr>
+                <th scope="row">' . $value2['address'] . '</th>
+                <td><a href="/ddwt20_project/rooms/?room_id=' . $value['room'] . '" role="button" class="btn btn-primary">More info</a></td>
+                <td>
+                    <form action="/ddwt20_project/myoptins/remove/" method="POST">
+                        <input type="hidden" value="<?= $room_id ?>" name="optin_id">
+                        <button type="submit" class="btn btn-danger">Undo optin</button>
+                    </form>
+                </td>
+            </tr>
+            ';
+        }
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
+
+}
+
+function get_optin_info($pdo, $optin_id){
+    $stmt = $pdo->prepare('SELECT * FROM optins WHERE optin_id = ?');
+    $stmt->execute([$optin_id]);
+    $optin_info = $stmt->fetch();
+    $optin_info_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($optin_info as $key => $value){
+        $optin_info_exp[$key] = htmlspecialchars($value);
+    }
+    return $optin_info_exp;
+}
+
+function remove_optin($pdo, $optin_id){
+    /* Get room info */
+    $optin_info = get_optin_info($pdo, $optin_id);
+
+    /* Delete Room */
+    $stmt = $pdo->prepare("DELETE FROM optins WHERE optin_id = ?");
+    $stmt->execute([$optin_id]);
+    $deleted = $stmt->rowCount();
+    if ($deleted ==  1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("room '%s' was removed successfully!", $optin_info['room'])
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'An error occurred. The optin was not undone.'
+        ];
+    }
+}
+

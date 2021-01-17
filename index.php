@@ -55,6 +55,10 @@ if ( check_login() ) {
             4 => Array(
                 'name' => 'My Account',
                 'url' => '/ddwt20_project/myaccount/'
+            ),
+            8 => Array(
+                'name' => 'My optins',
+                'url' => '/ddwt20_project/myoptins/'
             ));
     } else {
         $nav_template = Array(
@@ -190,6 +194,7 @@ elseif (new_route('/ddwt20_project/rooms/', 'get')) {
 
     /* Page content */
     $page_subtitle = sprintf("Information about the room on %s", $room_info['address']);
+    $user_info = user_information($database, get_user_id());
     $address = $room_info['address'];
     $type = $room_info['type'];
     $price = $room_info['price'];
@@ -456,6 +461,60 @@ elseif (new_route('/ddwt20_project/room/remove/', 'post')) {
     $feedback = remove_room($database, $_POST['room_id']);
     redirect(sprintf('/ddwt20_project/overview/?error_msg=%s', json_encode($feedback)));
 }
+
+/* Optin room */
+elseif (new_route('/ddwt20_project/room/optin/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+
+    $feedback = optin_room($database, $_POST['room_id'], $_SESSION['user_id']);
+    redirect(sprintf('/ddwt20_project/overview/?error_msg=%s', json_encode($feedback)));
+}
+
+/* My optins GET */
+elseif (new_route('/ddwt20_project/myoptins/', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+    /* Page info */
+    $page_title = 'My optins';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/ddwt20_project/', False),
+        'My optins' => na('/ddwt20_project/myoptins/', True)
+    ]);
+
+    $navigation = get_navigation($nav_template, 8);
+
+    /* Page content */
+    $page_subtitle = 'Rooms opted in';
+    $page_content = 'Here you find all rooms that you opted into as a tenant';
+    $user_info = user_information($database, get_user_id());
+    $left_content = get_rooms_optin_table(get_rooms_optin($_SESSION['user_id'], $database), get_rooms($database));
+
+
+    /* Get error from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('myoptins');
+}
+
+/* Remove room */
+elseif (new_route('/ddwt20_project/myoptins/remove/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+
+    $feedback = remove_optin($database, $_POST['optin_id']);
+    redirect(sprintf('/ddwt20_project/overview/?error_msg=%s', json_encode($feedback)));
+}
+
 
 else {
     http_response_code(404);
