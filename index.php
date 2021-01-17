@@ -59,6 +59,10 @@ if ( check_login() ) {
             8 => Array(
                 'name' => 'My optins',
                 'url' => '/ddwt20_project/myoptins/'
+            ),
+            9 => Array(
+                'name' => 'Messages',
+                'url' => '/ddwt20_project/messages/'
             ));
     } else {
         $nav_template = Array(
@@ -515,6 +519,36 @@ elseif (new_route('/ddwt20_project/myoptins/remove/', 'post')) {
 
     $feedback = remove_optin($database, $_POST['optin_id']);
     redirect(sprintf('/ddwt20_project/overview/?error_msg=%s', json_encode($feedback)));
+}
+
+elseif (new_route('/ddwt20_project/messages/', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+    /* Page info */
+    $page_title = 'Messages';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/ddwt20_project/', False),
+        'Messages' => na('/ddwt20_project/messages/', True)
+    ]);
+
+    $navigation = get_navigation($nav_template, 9);
+
+    /* Page content */
+    $page_subtitle = 'Here you can see your messages and send messages to other people!';
+
+    $page_content = get_chats_table(get_chats($database, $_SESSION['user_id']), $database);
+
+
+
+    /* Get error from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('messages');
 }
 
 

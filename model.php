@@ -784,7 +784,6 @@ function get_rooms_optin_table($rooms_optin, $pdo){
     </table>
     ';
     return $table_exp;
-
 }
 
 function get_optin_info($pdo, $optin_id){
@@ -829,3 +828,42 @@ function remove_optin($pdo, $optin_id){
     }
 }
 
+function get_chats($pdo, $user_id){
+    $stmt = $pdo->prepare('SELECT * FROM users WHERE user_id IN (SELECT receiver from messages WHERE sender = ?) OR user_id IN (SELECT sender from messages WHERE receiver = ?)');
+    $stmt->execute([$user_id, $user_id]);
+    $chats = $stmt->fetchAll();
+    $chats_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($chats as $key => $value){
+        foreach ($value as $user_key => $user_input) {
+            $chats_exp[$key][$user_key] = htmlspecialchars($user_input);
+        }
+    }
+    return $chats_exp;
+}
+
+function get_chats_table($chats, $pdo){
+    $table_exp = '
+    <table class="table table-hover">
+    <thead
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>';
+    foreach($chats as $key => $value){
+        $table_exp .= '
+            <tr>
+                <th scope="row">'.$value['full_name'].'</th>
+                <td><a href="/ddwt20_project/messages/chat/?other_id='.$value['user_id'].'" role="button" class="btn btn-primary">View Messages</a></td>
+            </tr>
+        ';
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
+}
