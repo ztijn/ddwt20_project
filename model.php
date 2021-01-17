@@ -440,7 +440,6 @@ function edit_user($pdo, $user_info){
     /* Check if all fields are set */
     if (
         empty($user_info['username']) or
-        empty($user_info['role']) or
         empty($user_info['full_name']) or
         empty($user_info['birth_date']) or
         empty($user_info['biography']) or
@@ -456,10 +455,9 @@ function edit_user($pdo, $user_info){
     }
 
     /* Update user */
-    $stmt = $pdo->prepare("UPDATE users SET username = ?, role = ?, full_name = ?, birth_date = ?, biography = ?, stud_prof = ?, language = ?, email = ?, phone = ? WHERE user_id = ?");
+    $stmt = $pdo->prepare("UPDATE users SET username = ?, full_name = ?, birth_date = ?, biography = ?, stud_prof = ?, language = ?, email = ?, phone = ? WHERE user_id = ?");
     $stmt->execute([
         $user_info['username'],
-        $user_info['role'],
         $user_info['full_name'],
         $user_info['birth_date'],
         $user_info['biography'],

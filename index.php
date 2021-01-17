@@ -158,7 +158,7 @@ elseif (new_route('/ddwt20_project/overview/', 'get')) {
     /* Page content */
     $page_subtitle = 'The overview of all rooms';
     $page_content = 'Here you find all rooms listed.';
-    $left_content = get_room_table(get_rooms($database), $database);
+    $left_content = get_room_table(get_rooms_available($database), $database);
 
     if ( isset($_GET['error_msg']) ) {
         $error_msg = get_error($_GET['error_msg']);
