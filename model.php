@@ -267,7 +267,7 @@ function add_room($pdo, $room_info, $current_user){
     if ($serie){
         return [
             'type' => 'danger',
-            'message' => 'This series was already added.'
+            'message' => 'This Room was already added.'
         ];
     }
     /* Add room */
