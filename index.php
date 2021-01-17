@@ -234,6 +234,7 @@ elseif (new_route('/ddwt20_project/myaccount/', 'get')) {
     /* Choose Template */
     include use_template('account');
 }
+
 /* edit accout GET */
 elseif (new_route('/ddwt20_project/myaccount/edit', 'get')){
     if ( !check_login() ){
