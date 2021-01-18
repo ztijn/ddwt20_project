@@ -868,7 +868,7 @@ function get_chats($pdo, $user_id){
     return $chats_exp;
 }
 
-function get_chats_table($chats, $pdo){
+function get_chats_table($chats){
     $table_exp = '
     <table class="table table-hover">
     <thead
@@ -882,7 +882,7 @@ function get_chats_table($chats, $pdo){
         $table_exp .= '
             <tr>
                 <th scope="row">'.$value['full_name'].'</th>
-                <td><a href="/ddwt20_project/messages/chat/?other_id='.$value['user_id'].'" role="button" class="btn btn-primary">View Messages</a></td>
+                <td><a href="/ddwt20_project/messages/chats/?other_id='.$value['user_id'].'" role="button" class="btn btn-primary">View Messages</a></td>
             </tr>
         ';
     }
@@ -891,4 +891,94 @@ function get_chats_table($chats, $pdo){
     </table>
     ';
     return $table_exp;
+}
+
+function get_messages($pdo, $user_id, $other_id){
+    $stmt = $pdo->prepare('SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY datetime');
+    $stmt->execute([$user_id, $other_id, $other_id, $user_id]);
+    $messages = $stmt->fetchAll();
+    $messages_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($messages as $key => $value){
+        foreach ($value as $user_key => $user_input) {
+            $messages_exp[$key][$user_key] = htmlspecialchars($user_input);
+        }
+    }
+    return $messages_exp;
+}
+
+function get_messages_table($messages, $pdo){
+    $table_exp = '
+    <table class="table table-hover">
+    <thead
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Message</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>';
+    foreach($messages as $key => $value){
+        $table_exp .= '
+            <tr>
+                <th scope="row">'.get_user($pdo,$value['sender']).'</th>
+                <td>'.$value['message'].'</td>
+            </tr>
+        ';
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
+}
+
+function send_message($pdo, $message){
+    /* Check if all fields are set */
+    if (
+        empty($message['message'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. No text was entered.'
+        ];
+    }
+
+    /* Check data type */
+    if (!is_numeric($message['sender'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Invalid Sender ID.'
+        ];
+    }
+
+    if (!is_numeric($message['receiver'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Invalid Receiver ID.'
+        ];
+    }
+
+    /* Add room */
+    $stmt = $pdo->prepare("INSERT INTO messages (sender, receiver, datetime, message) VALUES (?, ?, ?, ?)");
+    $stmt->execute([
+        $message['sender'],
+        $message['receiver'],
+        date("Y-m-d H:i:s"),
+        $message['message'],
+    ]);
+    $inserted = $stmt->rowCount();
+    if ($inserted ==  1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Message Sent")
+        ];
+    }
+    else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Message was not sent.'
+        ];
+    }
 }

@@ -85,6 +85,10 @@ if ( check_login() ) {
             7 => Array(
                 'name' => 'My Rooms',
                 'url' => '/ddwt20_project/myrooms/'
+            ),
+            9 => Array(
+                'name' => 'Messages',
+                'url' => '/ddwt20_project/messages/'
             ));
 
     }
@@ -543,7 +547,7 @@ elseif (new_route('/ddwt20_project/messages/', 'get')) {
     /* Page content */
     $page_subtitle = 'Here you can see your messages and send messages to other people!';
 
-    $page_content = get_chats_table(get_chats($database, $_SESSION['user_id']), $database);
+    $page_content = get_chats_table(get_chats($database, $_SESSION['user_id']));
 
     /* Get error from POST route */
     if ( isset($_GET['error_msg']) ) {
@@ -552,6 +556,44 @@ elseif (new_route('/ddwt20_project/messages/', 'get')) {
 
     /* Choose Template */
     include use_template('messages');
+}
+
+elseif (new_route('/ddwt20_project/messages/chats/', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+    /* Page info */
+    $page_title = 'Chatroom';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/ddwt20_project/', False),
+        'Messages' => na('/ddwt20_project/messages/', False),
+        'Chats' => na('/ddwt20_project/messages/chats/', True)
+    ]);
+
+    $navigation = get_navigation($nav_template, 9);
+
+    /* Page content */
+    $page_subtitle = 'Message History';
+
+    $page_content = get_messages_table(get_messages($database, $_SESSION['user_id'], $_GET['other_id']), $database);
+
+    /* Get error from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('chats');
+}
+
+elseif (new_route('/ddwt20_project/messages/chats/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+    $feedback = send_message($database, $_POST);
+    redirect(sprintf('/ddwt20_project/messages/chats/?error_msg=%s&other_id=%s', json_encode($feedback), $_POST['receiver']));
 }
 
 

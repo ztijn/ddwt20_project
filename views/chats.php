@@ -33,6 +33,14 @@
             <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
             <p><?= $page_content ?></p>
+            <form action="/ddwt20_project/messages/chats/" method="POST">
+                <input type="hidden" name="sender" value="<?= $user_info['user_id'] ?>">
+                <input type="hidden" name="receiver" value="<?= $_GET['other_id'] ?>">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="inputMessage" name="message" placeholder="Write something here..." required>
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
         </div>
 
         <!-- Right column -->
