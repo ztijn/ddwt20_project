@@ -49,7 +49,7 @@
                 <div class="form-group row">
                     <label for="inputPrice" class="col-sm-2 col-form-label">Price</label>
                     <div class="col-sm-10">
-                        <input type="number" placeholder="267000" class="form-control" id="inputPrice" name="Price" value="<?php if (isset($room_info)){echo $room_info['price'];} ?>" required>
+                        <input type="number" placeholder="850" class="form-control" id="inputPrice" name="Price" value="<?php if (isset($room_info)){echo $room_info['price'];} ?>" required>
                     </div>
                 </div>
                 <div class="form-group row">

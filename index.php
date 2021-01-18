@@ -15,9 +15,7 @@ $database = connect_db('localhost', 'ddwt20_project', 'ddwt20', 'ddwt20');
 /**
  * all variables to remove redundant code
  */
-$nbr_rooms = count_rooms($database);
 $nbr_rooms_available = count_rooms_available($database);
-$nbr_users = count_users($database);
 $right_column = use_template('cards');
 
 $nav_template = Array(

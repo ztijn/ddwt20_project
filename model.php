@@ -240,6 +240,13 @@ function register_user($pdo, $user_info){
 
 }
 
+/**
+ * adds a room to the database if all fields in the form are set correctly
+ * @param $pdo
+ * @param $room_info
+ * @param $current_user
+ * @return array|string[]
+ */
 function add_room($pdo, $room_info, $current_user){
     /* Check if all fields are set */
     if (
@@ -305,6 +312,13 @@ function add_room($pdo, $room_info, $current_user){
     }
 }
 
+/**
+ * updates the info of a room in the database
+ * @param $pdo
+ * @param $room_info
+ * @param $current_user
+ * @return array|string[]
+ */
 function update_room($pdo, $room_info, $current_user){
     /* Check if all fields are set */
     if (
@@ -379,6 +393,10 @@ function update_room($pdo, $room_info, $current_user){
     }
 }
 
+/**
+ * is session is active, return the user_id of the current user in the session
+ * @return false|mixed
+ */
 function get_user_id(){
     if (isset($_SESSION['user_id'])){
         return $_SESSION['user_id'];
@@ -387,6 +405,12 @@ function get_user_id(){
     }
 }
 
+/**
+ * get the full name of a user according to the user_id given
+ * @param $pdo
+ * @param $id
+ * @return string
+ */
 function get_user($pdo, $id){
     $stmt = $pdo->prepare('SELECT full_name FROM users where user_id = ?');
     $stmt->execute([$id]);
@@ -394,6 +418,12 @@ function get_user($pdo, $id){
     return sprintf("%s", htmlspecialchars($user_name['full_name']));
 }
 
+/**
+ * get all information about a user by the given user_id
+ * @param $pdo
+ * @param $id
+ * @return mixed
+ */
 function user_information($pdo, $id){
     $stmt = $pdo->prepare('SELECT * FROM users where user_id = ?');
     $stmt->execute([$id]);
@@ -401,6 +431,12 @@ function user_information($pdo, $id){
     return $user;
 }
 
+/**
+ * get all information of a single room by given room_id
+ * @param $pdo
+ * @param $id
+ * @return mixed
+ */
 function room_information($pdo, $id){
     $stmt = $pdo->prepare('SELECT * FROM rooms where room_id = ?');
     $stmt->execute([$id]);
@@ -408,22 +444,11 @@ function room_information($pdo, $id){
     return $room;
 }
 
-function count_users($pdo){
-    /* user count */
-    $stmt = $pdo->prepare('SELECT * FROM users');
-    $stmt->execute();
-    $user_count = $stmt->rowCount();
-    return $user_count;
-}
-
-function count_rooms($pdo){
-    /* room count */
-    $stmt = $pdo->prepare('SELECT * FROM rooms');
-    $stmt->execute();
-    $series = $stmt->rowCount();
-    return $series;
-}
-
+/**
+ * counts the amount of rooms with status 'available'
+ * @param $pdo
+ * @return mixed
+ */
 function count_rooms_available($pdo){
     /* room count */
     $stmt = $pdo->prepare('SELECT * FROM rooms WHERE status = "available"');
@@ -432,6 +457,9 @@ function count_rooms_available($pdo){
     return $series;
 }
 
+/**
+ * logout the user / end session
+ */
 function logout_user(){
     /* empty the session and than destroy it */
     session_unset();
@@ -445,8 +473,13 @@ function logout_user(){
     redirect(sprintf('/ddwt20_project/?error_msg=%s', json_encode($feedback)));
 }
 
+/**
+ * edit the info of the user in the database if al fieldss are set correctly
+ * @param $pdo
+ * @param $user_info
+ * @return array|string[]
+ */
 function edit_user($pdo, $user_info){
-
     /* Check if all fields are set */
     if (
         empty($user_info['username']) or
@@ -492,6 +525,12 @@ function edit_user($pdo, $user_info){
     }
 }
 
+/**
+ * remove a user from the database
+ * @param $pdo
+ * @param $user_id
+ * @return array|string[]
+ */
 function remove_user($pdo, $user_id){
     /* Delete User */
     $stmt = $pdo->prepare("DELETE FROM users WHERE user_id = ?");
@@ -513,6 +552,10 @@ function remove_user($pdo, $user_id){
     }
 }
 
+/**
+ * check if current user is logged in
+ * @return bool
+ */
 function check_login(){
     /* Check if a session already been started */
     if (!isset($_SESSION)) {
@@ -526,6 +569,12 @@ function check_login(){
     }
 }
 
+/**
+ * check username and password, then login the user /start session
+ * @param $pdo
+ * @param $form_data
+ * @return array|string[]
+ */
 function login_user($pdo, $form_data){
     /* Check if all fields are set */
     if (
@@ -575,6 +624,11 @@ function login_user($pdo, $form_data){
     }
 }
 
+/**
+ * get all info of all the rooms that are available
+ * @param $pdo
+ * @return array
+ */
 function get_rooms_available($pdo){
     $stmt = $pdo->prepare('SELECT * FROM rooms WHERE status = "available"');
     $stmt->execute();
@@ -590,6 +644,12 @@ function get_rooms_available($pdo){
     return $rooms_exp;
 }
 
+/**
+ * get a table in html to display all the rooms given
+ * @param $rooms
+ * @param $pdo
+ * @return string
+ */
 function get_room_table($rooms, $pdo){
     $table_exp = '
     <table class="table table-hover">
@@ -617,6 +677,12 @@ function get_room_table($rooms, $pdo){
     return $table_exp;
 }
 
+/**
+ * get all rooms owned by given user
+ * @param $user_info
+ * @param $pdo
+ * @return array
+ */
 function get_rooms_owned($user_info, $pdo){
     $stmt = $pdo->prepare('SELECT * FROM rooms WHERE owner = ?');
     $stmt->execute([$user_info]);
@@ -633,6 +699,11 @@ function get_rooms_owned($user_info, $pdo){
 
 }
 
+/**
+ * get a html table to display all owned rooms by the user
+ * @param $rooms_owned
+ * @return string
+ */
 function get_rooms_owned_table($rooms_owned){
     $table_exp = '
     <table class="table table-hover">
@@ -658,6 +729,12 @@ function get_rooms_owned_table($rooms_owned){
     return $table_exp;
 }
 
+/**
+ * remove all infor of a room from the database. also all optins and leases of the room
+ * @param $pdo
+ * @param $room_id
+ * @return array|string[]
+ */
 function remove_room($pdo, $room_id){
     /* Get room info */
     $room_info = room_information($pdo, $room_id);
@@ -686,6 +763,13 @@ function remove_room($pdo, $room_id){
     }
 }
 
+/**
+ * add an optin to the database for a given room by the current tenant/user
+ * @param $pdo
+ * @param $room_id
+ * @param $user_id
+ * @return array|string[]
+ */
 function optin_room($pdo, $room_id, $user_id){
     /* Get room info */
     $room_info = room_information($pdo, $room_id);
@@ -731,6 +815,12 @@ function optin_room($pdo, $room_id, $user_id){
     }
 }
 
+/**
+ * get all optins for a given user/tenant
+ * @param $user_info
+ * @param $pdo
+ * @return array
+ */
 function get_rooms_optin($user_info, $pdo){
     $stmt = $pdo->prepare('SELECT * FROM optins WHERE tenant = ?');
     $stmt->execute([$user_info]);
@@ -747,6 +837,12 @@ function get_rooms_optin($user_info, $pdo){
 
 }
 
+/**
+ * get the address for a given room_id
+ * @param $pdo
+ * @param $id
+ * @return string
+ */
 function get_room_address($pdo, $id){
     $stmt = $pdo->prepare('SELECT address FROM rooms where room_id = ?');
     $stmt->execute([$id]);
@@ -755,6 +851,12 @@ function get_room_address($pdo, $id){
 
 }
 
+/**
+ * get a html table to display all your optins and buttons to send a message and a button to remove your optin
+ * @param $rooms_optin
+ * @param $pdo
+ * @return string
+ */
 function get_rooms_optin_table($rooms_optin, $pdo){
     $table_exp = '
     <table class="table table-hover">
@@ -788,6 +890,12 @@ function get_rooms_optin_table($rooms_optin, $pdo){
 
 }
 
+/**
+ * get all information about an optin by its given optin_id
+ * @param $pdo
+ * @param $id
+ * @return mixed
+ */
 function optins_information($pdo, $id){
     $stmt = $pdo->prepare('SELECT * FROM optins WHERE optin_id = ?');
     $stmt->execute([$id]);
@@ -795,6 +903,12 @@ function optins_information($pdo, $id){
     return $room;
 }
 
+/**
+ * remove an optin from the database
+ * @param $pdo
+ * @param $optin_id
+ * @return array|string[]
+ */
 function remove_optin($pdo, $optin_id){
     /* Get room info */
     $optin_info = optins_information($pdo, $optin_id);
@@ -817,6 +931,12 @@ function remove_optin($pdo, $optin_id){
     }
 }
 
+/**
+ * get all optins for a given room_id
+ * @param $pdo
+ * @param $room_id
+ * @return array
+ */
 function optin_owners($pdo, $room_id){
     $stmt = $pdo->prepare('SELECT * FROM optins WHERE room = ?');
     $stmt->execute([$room_id]);
@@ -833,6 +953,12 @@ function optin_owners($pdo, $room_id){
     return $optin_info_exp;
 }
 
+/**
+ * get all users with who the current user has an active chat
+ * @param $pdo
+ * @param $user_id
+ * @return array
+ */
 function get_chats($pdo, $user_id){
     $stmt = $pdo->prepare('SELECT * FROM users WHERE user_id IN (SELECT receiver from messages WHERE sender = ?) OR user_id IN (SELECT sender from messages WHERE receiver = ?)');
     $stmt->execute([$user_id, $user_id]);
@@ -848,6 +974,11 @@ function get_chats($pdo, $user_id){
     return $chats_exp;
 }
 
+/**
+ * get a html table displaying all users the current user has an active chat
+ * @param $chats
+ * @return string
+ */
 function get_chats_table($chats){
     $table_exp = '
     <table class="table table-hover">
@@ -873,6 +1004,13 @@ function get_chats_table($chats){
     return $table_exp;
 }
 
+/**
+ * get all messages between 2 users
+ * @param $pdo
+ * @param $user_id
+ * @param $other_id
+ * @return array
+ */
 function get_messages($pdo, $user_id, $other_id){
     $stmt = $pdo->prepare('SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY datetime');
     $stmt->execute([$user_id, $other_id, $other_id, $user_id]);
@@ -888,6 +1026,12 @@ function get_messages($pdo, $user_id, $other_id){
     return $messages_exp;
 }
 
+/**
+ * get a html table displaying all messages between 2 users
+ * @param $messages
+ * @param $pdo
+ * @return string
+ */
 function get_messages_table($messages, $pdo){
     $table_exp = '
     <table class="table table-hover">
@@ -914,6 +1058,12 @@ function get_messages_table($messages, $pdo){
     return $table_exp;
 }
 
+/**
+ * send a message to a certain user
+ * @param $pdo
+ * @param $message
+ * @return array|string[]
+ */
 function send_message($pdo, $message){
     /* Check if all fields are set */
     if (
@@ -963,6 +1113,13 @@ function send_message($pdo, $message){
     }
 }
 
+/**
+ * get html table displaying all optins for a room the current user owns
+ * @param $pdo
+ * @param $optins
+ * @param $room_id
+ * @return string
+ */
 function get_optins_table($pdo, $optins, $room_id){
     $table_exp = '
     <table class="table table-hover">
@@ -996,6 +1153,12 @@ function get_optins_table($pdo, $optins, $room_id){
     return $table_exp;
 }
 
+/**
+ * add a lease by a given optin
+ * @param $pdo
+ * @param $optin
+ * @return array|string[]
+ */
 function add_lease($pdo, $optin){
     $stmt = $pdo->prepare("INSERT INTO leases (room, tenant, start_date) VALUES (?, ?, ?)");
     $stmt->execute([
@@ -1032,6 +1195,12 @@ function add_lease($pdo, $optin){
     }
 }
 
+/**
+ * end a lease for a certain room
+ * @param $pdo
+ * @param $room_id
+ * @return array|string[]
+ */
 function end_lease($pdo, $room_id){
     $stmt = $pdo->prepare("UPDATE leases SET end_date= ? WHERE end_date IS NULL AND room = ?");
     $stmt->execute([
@@ -1056,6 +1225,12 @@ function end_lease($pdo, $room_id){
     }
 }
 
+/**
+ *
+ * @param $pdo
+ * @param $room_id
+ * @return mixed
+ */
 function get_owner($pdo, $room_id){
     $stmt = $pdo->prepare("SELECT owner FROM rooms WHERE room_id = ?");
     $stmt->execute([$room_id]);
