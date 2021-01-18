@@ -250,7 +250,7 @@ elseif (new_route('/ddwt20_project/myaccount/', 'get')) {
     include use_template('account');
 }
 
-/* edit accout GET */
+/* edit account GET */
 elseif (new_route('/ddwt20_project/myaccount/edit', 'get')){
     if ( !check_login() ){
         redirect('/ddwt20_project/login/');
@@ -527,6 +527,7 @@ elseif (new_route('/ddwt20_project/myoptins/remove/', 'post')) {
     redirect(sprintf('/ddwt20_project/overview/?error_msg=%s', json_encode($feedback)));
 }
 
+/* All active Messages */
 elseif (new_route('/ddwt20_project/messages/', 'get')) {
     /* Check if logged in */
     if ( !check_login() ) {
@@ -555,6 +556,7 @@ elseif (new_route('/ddwt20_project/messages/', 'get')) {
     include use_template('main');
 }
 
+/* Single message GET */
 elseif (new_route('/ddwt20_project/messages/chats/', 'get')) {
     /* Check if logged in */
     if ( !check_login() ) {
@@ -584,6 +586,7 @@ elseif (new_route('/ddwt20_project/messages/chats/', 'get')) {
     include use_template('chats');
 }
 
+/* Send a message */
 elseif (new_route('/ddwt20_project/messages/chats/', 'post')) {
     /* Check if logged in */
     if ( !check_login() ) {
@@ -593,6 +596,7 @@ elseif (new_route('/ddwt20_project/messages/chats/', 'post')) {
     redirect(sprintf('/ddwt20_project/messages/chats/?error_msg=%s&other_id=%s', json_encode($feedback), $_POST['receiver']));
 }
 
+/* Adding/activating a lease */
 elseif (new_route('/ddwt20_project/lease/add/', 'post')) {
     /* Check if logged in */
     if ( !check_login() ) {
@@ -602,6 +606,7 @@ elseif (new_route('/ddwt20_project/lease/add/', 'post')) {
     redirect(sprintf('/ddwt20_project/rooms/?error_msg=%s&room_id=%s', json_encode($feedback), $_POST['room_id']));
 }
 
+/* Removing/deactivating a lease */
 elseif (new_route('/ddwt20_project/lease/end/', 'post')) {
     /* Check if logged in */
     if ( !check_login() ) {
@@ -611,7 +616,7 @@ elseif (new_route('/ddwt20_project/lease/end/', 'post')) {
     redirect(sprintf('/ddwt20_project/rooms/?error_msg=%s&room_id=%s', json_encode($feedback), $_POST['room_id']));
 }
 
-
+/* no valid url */
 else {
     http_response_code(404);
 }
