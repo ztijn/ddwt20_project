@@ -70,7 +70,16 @@
                         <button type="submit" class="btn btn-danger">Remove</button>
                     </form>
                 </div>
+                <?php if ($status == 'unavailable') { ?>
+                <div class="col-sm-2">
+                    <form action="/ddwt20_project/lease/end/" method="POST">
+                        <input type="hidden" value="<?= $room_id ?>" name="room_id">
+                        <button type="submit" class="btn btn-info">End Lease</button>
+                    </form>
+                </div>
+                <?php } ?>
             </div>
+                <?php if ($status == 'available') { ?>
                 <div class="row">
                     <div class="col-md-12">
                         <p></p>
@@ -78,7 +87,7 @@
                         <p><?php echo $optins_table; ?></p>
                     </div>
                 </div>
-            <?php } ?>
+            <?php }} ?>
             <?php if(!$display_buttons) { ?>
                 <div class="row">
                     <div class="col-sm-2">

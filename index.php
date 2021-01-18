@@ -201,7 +201,6 @@ elseif (new_route('/ddwt20_project/rooms/', 'get')) {
     $navigation = get_navigation($nav_template, 2);
 
     $optin_tenants = optin_owners($database, $room_id);
-    echo print_r($optin_tenants);
    $optins_table = get_optins_table($database, $optin_tenants, $room_id);
 
 
@@ -594,6 +593,24 @@ elseif (new_route('/ddwt20_project/messages/chats/', 'post')) {
     }
     $feedback = send_message($database, $_POST);
     redirect(sprintf('/ddwt20_project/messages/chats/?error_msg=%s&other_id=%s', json_encode($feedback), $_POST['receiver']));
+}
+
+elseif (new_route('/ddwt20_project/lease/add/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+    $feedback = add_lease($database, $_POST);
+    redirect(sprintf('/ddwt20_project/rooms/?error_msg=%s&room_id=%s', json_encode($feedback), $_POST['room_id']));
+}
+
+elseif (new_route('/ddwt20_project/lease/end/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/ddwt20_project/login/');
+    }
+    $feedback = end_lease($database, $_POST['room_id']);
+    redirect(sprintf('/ddwt20_project/rooms/?error_msg=%s&room_id=%s', json_encode($feedback), $_POST['room_id']));
 }
 
 

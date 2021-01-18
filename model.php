@@ -951,7 +951,7 @@ function send_message($pdo, $message){
         ];
     }
 
-    /* Add room */
+    /* Add message */
     $stmt = $pdo->prepare("INSERT INTO messages (sender, receiver, datetime, message) VALUES (?, ?, ?, ?)");
     $stmt->execute([
         $message['sender'],
@@ -1005,4 +1005,64 @@ function get_optins_table($pdo, $optins, $room_id){
     </table>
     ';
     return $table_exp;
+}
+
+function add_lease($pdo, $optin){
+    $stmt = $pdo->prepare("INSERT INTO leases (room, tenant, start_date) VALUES (?, ?, ?)");
+    $stmt->execute([
+        $optin['room_id'],
+        $optin['tenant'],
+        date("Y-m-d"),
+    ]);
+    $inserted = $stmt->rowCount();
+    if ($inserted ==  1) {
+        $stmt = $pdo->prepare("UPDATE rooms SET status = ? WHERE room_id = ?");
+        $stmt->execute(['unavailable', $optin['room_id']]);
+        $updated = $stmt->rowCount();
+        if ($updated ==  1) {
+            /* Delete optins */
+            $stmt = $pdo->prepare("DELETE FROM optins WHERE room = ?");
+            $stmt->execute([$optin['room_id']]);
+            return [
+                'type' => 'success',
+                'message' => sprintf("Your room has been leased!")
+            ];
+        }
+        else {
+            return [
+                'type' => 'warning',
+                'message' => 'Warning, Status of room has not been changed.'
+            ];
+        }
+    }
+    else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Lease could not be entered in the database.'
+        ];
+    }
+}
+
+function end_lease($pdo, $room_id){
+    $stmt = $pdo->prepare("UPDATE leases SET end_date= ? WHERE end_date IS NULL AND room = ?");
+    $stmt->execute([
+        date("Y-m-d"),
+        $room_id
+    ]);
+    $updated = $stmt->rowCount();
+    if ($updated ==  1) {
+        /* Delete optins */
+        $stmt = $pdo->prepare("UPDATE rooms SET status = ? WHERE room_id = ?");
+        $stmt->execute(['available', $room_id]);
+        return [
+            'type' => 'success',
+            'message' => sprintf("Lease has been ended!")
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'Warning, lease has not ended.'
+        ];
+    }
 }
