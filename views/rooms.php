@@ -56,12 +56,6 @@
                     <td><?= $status ?></td>
                 </tr>
                 </tbody>
-                <?php if ($display_buttons) { ?>
-                <tr>
-                    <th scope="row">Interested tenants</th>
-                    <td><?= $tenants ?></td>
-                </tr>
-                <?php } ?>
             </table>
 
             <!-- Remove and edit button for the owner of the listed room -->
@@ -77,6 +71,13 @@
                     </form>
                 </div>
             </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p></p>
+                        <h5>Opt ins</h5>
+                        <p><?php echo $optins_table; ?></p>
+                    </div>
+                </div>
             <?php } ?>
             <?php if(!$display_buttons) { ?>
                 <div class="row">

@@ -661,7 +661,6 @@ function get_rooms_owned_table($rooms_owned){
     </table>
     ';
     return $table_exp;
-
 }
 
 function remove_room($pdo, $room_id){
@@ -829,28 +828,20 @@ function remove_optin($pdo, $optin_id){
     }
 }
 
-function optin_owners($pdo){
-    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE owner = ?');
-    $stmt->execute([$_SESSION['user_id']]);
-    $optin_info = $stmt->fetch();
+function optin_owners($pdo, $room_id){
+    $stmt = $pdo->prepare('SELECT * FROM optins WHERE room = ?');
+    $stmt->execute([$room_id]);
+    $optin_info = $stmt->fetchAll();
     $optin_info_exp = Array();
 
     /* Create array with htmlspecialchars */
     foreach ($optin_info as $key => $value){
-        $optin_info_exp[$key] = htmlspecialchars($value);
+        foreach ($value as $user_key => $user_input) {
+            $optin_info_exp[$key][$user_key] = htmlspecialchars($user_input);
+        }
     }
 
-    $stmt2 = $pdo -> prepare('SELECT * FROM optins WHERE room = ?');
-    $stmt2->execute([$optin_info_exp['room_id']]);
-    $optin_info2 = $stmt2->fetch();
-    $optin_info_exp2 = Array();
-
-    /* Create array with htmlspecialchars */
-    foreach ($optin_info2 as $key => $value){
-        $optin_info_exp2[$key] = htmlspecialchars($value);
-    }
-
-    return $optin_info_exp2;
+    return $optin_info_exp;
 }
 
 function get_chats($pdo, $user_id){
@@ -981,4 +972,37 @@ function send_message($pdo, $message){
             'message' => 'There was an error. Message was not sent.'
         ];
     }
+}
+
+function get_optins_table($pdo, $optins, $room_id){
+    $table_exp = '
+    <table class="table table-hover">
+    <thead
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>';
+    foreach($optins as $key => $value){
+        $table_exp .= '
+        <tr>
+            <th scope="row">'.get_user($pdo, $value['tenant']).'</th>
+            <td><a href="/ddwt20_project/messages/chats/?other_id='.$value['tenant'].'" role="button" class="btn btn-primary">Send Message</a></td>
+            <td>
+                <form action="/ddwt20_project/lease/add/" method="POST">
+                    <input type="hidden" value="'.$room_id.'" name="room_id">
+                    <input type="hidden" value="'.$value['tenant'].'" name="tenant">
+                    <button type="submit" class="btn btn-success">Choose user for lease</button>
+                </form>
+            </td>
+        </tr>
+        ';
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
 }
