@@ -80,6 +80,7 @@
                 <?php } ?>
             </div>
                 <?php if ($status == 'available') { ?>
+                        <br/><br/>
                 <div class="row">
                     <div class="col-md-12">
                         <p></p>
