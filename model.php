@@ -667,6 +667,12 @@ function remove_room($pdo, $room_id){
     /* Get room info */
     $room_info = room_information($pdo, $room_id);
 
+    /* Delete optins */
+    $stmt = $pdo->prepare("DELETE FROM optins WHERE room = ?");
+    $stmt->execute([$room_id]);
+    /* Delete leases */
+    $stmt = $pdo->prepare("DELETE FROM leases WHERE room = ?");
+    $stmt->execute([$room_id]);
     /* Delete Room */
     $stmt = $pdo->prepare("DELETE FROM rooms WHERE room_id = ?");
     $stmt->execute([$room_id]);
