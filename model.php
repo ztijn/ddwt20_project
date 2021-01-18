@@ -148,11 +148,21 @@ function get_navigation($template, $active_id){
     return $navigation_exp;
 }
 
+/**
+ * redirects the user to a new url
+ * @param $location
+ */
 function redirect($location){
     header(sprintf('Location: %s', $location));
     die();
 }
 
+/**
+ * adds user to the database if all fields in the form are set correctly
+ * @param $pdo
+ * @param $user_info
+ * @return array|string[]
+ */
 function register_user($pdo, $user_info){
     /* Check if all fields are set */
     if (
@@ -565,21 +575,6 @@ function login_user($pdo, $form_data){
     }
 }
 
-function get_rooms($pdo){
-    $stmt = $pdo->prepare('SELECT * FROM rooms');
-    $stmt->execute();
-    $rooms = $stmt->fetchAll();
-    $rooms_exp = Array();
-
-    /* Create array with htmlspecialchars */
-    foreach ($rooms as $key => $value){
-        foreach ($value as $user_key => $user_input) {
-            $rooms_exp[$key][$user_key] = htmlspecialchars($user_input);
-        }
-    }
-    return $rooms_exp;
-}
-
 function get_rooms_available($pdo){
     $stmt = $pdo->prepare('SELECT * FROM rooms WHERE status = "available"');
     $stmt->execute();
@@ -774,7 +769,8 @@ function get_rooms_optin_table($rooms_optin, $pdo){
         $table_exp .= '
             <tr>
                 <th scope="row">'.get_room_address($pdo, $value['room']).'</th>
-                <td><a href="/ddwt20_project/rooms/?room_id='.$value['room'].'" role="button" class="btn btn-primary">More info</a></td>
+                <td><a href="/ddwt20_project/rooms/?room_id='.$value['room'].'" role="button" class="btn btn-info">More info</a></td>
+                <td><a href="/ddwt20_project/messages/chats/?other_id='.get_owner($pdo, $value['room']).'" role="button" class="btn btn-primary">Send Message</a></td>
                 <td>
                     <form action="/ddwt20_project/myoptins/remove/" method="POST">
                         <input type="hidden" value="'  .$value['optin_id'].  '" name="optin_id">
@@ -790,19 +786,6 @@ function get_rooms_optin_table($rooms_optin, $pdo){
     ';
     return $table_exp;
 
-}
-
-function get_optin_info($pdo, $optin_id){
-    $stmt = $pdo->prepare('SELECT * FROM optins WHERE optin_id = ?');
-    $stmt->execute([$optin_id]);
-    $optin_info = $stmt->fetch();
-    $optin_info_exp = Array();
-
-    /* Create array with htmlspecialchars */
-    foreach ($optin_info as $key => $value){
-        $optin_info_exp[$key] = htmlspecialchars($value);
-    }
-    return $optin_info_exp;
 }
 
 function optins_information($pdo, $id){
@@ -1071,4 +1054,11 @@ function end_lease($pdo, $room_id){
             'message' => 'Warning, lease has not ended.'
         ];
     }
+}
+
+function get_owner($pdo, $room_id){
+    $stmt = $pdo->prepare("SELECT owner FROM rooms WHERE room_id = ?");
+    $stmt->execute([$room_id]);
+    $owner = $stmt->fetch();
+    return $owner['owner'];
 }

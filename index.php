@@ -515,7 +515,7 @@ elseif (new_route('/ddwt20_project/myoptins/', 'get')) {
     }
 
     /* Choose Template */
-    include use_template('myoptins');
+    include use_template('main');
 }
 
 /* Remove optin */
