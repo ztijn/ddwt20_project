@@ -423,7 +423,7 @@ elseif (new_route('/ddwt20_project/myrooms/', 'get')) {
     }
 
     /* Choose Template */
-    include use_template('myrooms');
+    include use_template('main');
 }
 
 
@@ -552,7 +552,7 @@ elseif (new_route('/ddwt20_project/messages/', 'get')) {
     }
 
     /* Choose Template */
-    include use_template('messages');
+    include use_template('main');
 }
 
 elseif (new_route('/ddwt20_project/messages/chats/', 'get')) {
